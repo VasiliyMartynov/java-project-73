@@ -11,7 +11,7 @@ COPY settings.gradle.kts .
 COPY build.gradle .
 COPY settings.gradle .
 COPY gradlew .
-COPY src src
+#COPY src src
 #COPY config config
 
 ENV JAVA_OPTS "-Xmx512M -Xms512M"
