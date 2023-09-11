@@ -22,7 +22,8 @@ make setup
 #Run server
 
 make start
-# Open http://localhost:3000
+# Open http://localhost:8080
+
 Ссылка на render
 
 https://vasiliymartynov-java-project-73.onrender.com

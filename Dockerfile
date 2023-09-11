@@ -12,7 +12,7 @@ COPY build.gradle .
 COPY settings.gradle .
 COPY gradlew .
 COPY src src
-COPY config config
+#COPY config config
 
 ENV JAVA_OPTS "-Xmx512M -Xms512M"
 EXPOSE 7070
