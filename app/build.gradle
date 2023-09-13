@@ -2,40 +2,85 @@ plugins {
 	id 'application'
 	id 'checkstyle'
 	id 'jacoco'
-	id 'org.springframework.boot' version '3.1.3'
-	id 'io.spring.dependency-management' version '1.1.3'
-	id "com.github.ben-manes.versions" version "0.48.0"
-	id 'com.adarshr.test-logger' version '3.2.0'
+	id 'org.springframework.boot' version '3.1.1'
+	id 'io.spring.dependency-management' version '1.1.0'
+	id 'com.adarshr.test-logger' version '2.1.1'
+	id 'com.github.ben-manes.versions' version '0.38.0'
+	id 'org.liquibase.gradle' version '2.2.0'
+	id 'org.springdoc.openapi-gradle-plugin' version '1.3.3'
 	id 'com.github.johnrengelman.processes' version '0.5.0'
-
+	id 'org.siouan.frontend-jdk11' version '6.0.0'
 }
 
 group = 'hexlet.code'
 version = '1.0-SNAPSHOT'
 
-java {
-	sourceCompatibility = '20'
+application {
+	mainClass = 'hexlet.code.AppApplication'
 }
 
 repositories {
 	mavenCentral()
 }
 
-application {
-	mainClass = 'hexlet.code.AppApplication'
-}
-
 dependencies {
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	compileOnly 'org.projectlombok:lombok'
+
 	implementation(
-			'org.springframework.boot:spring-boot-starter',
-//			'org.springframework.boot:spring-boot-starter-data-jpa',
+			'org.springframework.boot:spring-boot-starter-data-jpa',
 			'org.springframework.boot:spring-boot-starter-web',
-//			'org.liquibase:liquibase-core',
+			'com.querydsl:querydsl-jpa:5.0.0:jakarta',
+			'org.liquibase:liquibase-core',
+			'io.jsonwebtoken:jjwt:0.9.1',
+			'org.springdoc:springdoc-openapi-ui:1.7.0',
+			'com.rollbar:rollbar-spring-boot3-webmvc:1.10.0'
 	)
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	liquibaseRuntime(
+			sourceSets.main.output,
+			'org.liquibase:liquibase-core',
+			'info.picocli:picocli:4.7.1',
+			'org.liquibase.ext:liquibase-hibernate6:4.21.1',
+			'org.springframework.boot:spring-boot-starter-data-jpa',
+			'com.h2database:h2'
+	)
+
+	runtimeOnly(
+			'com.h2database:h2',
+			'org.postgresql:postgresql:42.2.27'
+	)
+
+	testImplementation(
+			'org.springframework.boot:spring-boot-starter-security',
+			'org.springframework.security:spring-security-test',
+			'org.springframework.boot:spring-boot-starter-test',
+			'org.assertj:assertj-core:3.11.1',
+			'com.tobedevoured.modelcitizen:spring:0.8.3'
+	)
+
+	annotationProcessor(
+			'org.projectlombok:lombok',
+			'com.querydsl:querydsl-apt:5.0.0:jakarta',
+			'jakarta.persistence:jakarta.persistence-api:3.1.0'
+	)
 }
 
-tasks.named('test') {
+wrapper {
+	gradleVersion = '8.2'
+	distributionType = Wrapper.DistributionType.ALL
+}
+
+compileJava {
+	options.release = 20
+	options.encoding = 'UTF-8'
+}
+
+checkstyle {
+	toolVersion '10.12.1'
+}
+
+test {
 	useJUnitPlatform()
 }
 
@@ -50,6 +95,25 @@ test {
 	finalizedBy jacocoTestReport
 }
 
-checkstyle {
-	toolVersion '10.12.3'
+jacocoTestReport {
+	dependsOn test
+}
+
+// Настраиваем таску diffChangeLog таким образом,
+// чтобы миграции учитывали изменения в моделях
+diffChangelog {
+	dependsOn compileJava
+}
+
+// Настраиваем Liquibase
+liquibase {
+	activities {
+		main {
+			changelogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
+			url 'jdbc:h2:./taskManagerDB'
+			referenceUrl 'hibernate:spring:hexlet.code.model' +
+					'?dialect=org.hibernate.dialect.H2Dialect' +
+					'&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy'
+		}
+	}
 }

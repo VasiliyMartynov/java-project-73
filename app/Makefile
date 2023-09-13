@@ -1,34 +1,40 @@
 setup:
-	gradle wrapper --gradle-version 8.3
+	gradle wrapper --gradle-version 8.2
 
 clean:
-	./gradlew clean
+	gradle clean
 
 build:
-	./gradlew clean build
+	gradle clean build
 
 start:
-	APP_ENV=development ./gradlew run
+	gradle bootRun --args='--spring.profiles.active=dev'
+
+start-prod:
+	gradle bootRun --args='--spring.profiles.active=prod'
 
 install:
-	./gradlew install
+	gradle installDist
 
 start-dist:
-	APP_ENV=production ./build/install/app/bin/app
-
-generate-migrations:
-	./gradlew generateMigrations
+	./build/install/app/bin/app
 
 lint:
-	./gradlew checkstyleMain checkstyleTest
+	gradle checkstyleMain checkstyleTest
 
 test:
-	./gradlew test
+	gradle test
 
 report:
-	./gradlew jacocoTestReport
+	gradle jacocoTestReport
 
 check-updates:
-	./gradlew dependencyUpdates
+	gradle dependencyUpdates
+
+generate-migrations:
+	gradle diffChangeLog
+
+db-migrate:
+	gradle update
 
 .PHONY: build
