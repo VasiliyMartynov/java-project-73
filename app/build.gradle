@@ -2,14 +2,12 @@ plugins {
 	id 'application'
 	id 'checkstyle'
 	id 'jacoco'
+	id 'java'
 	id 'org.springframework.boot' version '3.1.1'
 	id 'io.spring.dependency-management' version '1.1.0'
 	id 'com.adarshr.test-logger' version '2.1.1'
 	id 'com.github.ben-manes.versions' version '0.38.0'
 	id 'org.liquibase.gradle' version '2.2.0'
-	id 'org.springdoc.openapi-gradle-plugin' version '1.3.3'
-	id 'com.github.johnrengelman.processes' version '0.5.0'
-	id 'org.siouan.frontend-jdk11' version '6.0.0'
 }
 
 group = 'hexlet.code'
@@ -31,33 +29,35 @@ dependencies {
 			'org.springframework.boot:spring-boot-starter-data-jpa',
 			'org.springframework.boot:spring-boot-starter-web',
 			'com.querydsl:querydsl-jpa:5.0.0:jakarta',
-			'org.liquibase:liquibase-core',
-			'io.jsonwebtoken:jjwt:0.9.1',
-			'org.springdoc:springdoc-openapi-ui:1.7.0',
-			'com.rollbar:rollbar-spring-boot3-webmvc:1.10.0'
+			'info.picocli:picocli:4.7.5',
+			'org.hibernate.validator:hibernate-validator:8.0.1.Final',
+			'org.liquibase:liquibase-core'
 	)
 
 	liquibaseRuntime(
 			sourceSets.main.output,
 			'org.liquibase:liquibase-core',
-			'info.picocli:picocli:4.7.1',
-			'org.liquibase.ext:liquibase-hibernate6:4.21.1',
+			'org.liquibase.ext:liquibase-hibernate6:4.23.2',
 			'org.springframework.boot:spring-boot-starter-data-jpa',
-			'com.h2database:h2'
+			'com.h2database:h2:2.2.224',
+			'info.picocli:picocli:4.7.5',
+			'org.postgresql:postgresql:42.6.0'
 	)
 
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
 	runtimeOnly(
-			'com.h2database:h2',
-			'org.postgresql:postgresql:42.2.27'
+			'com.h2database:h2:2.2.224',
+			'org.postgresql:postgresql:42.6.0'
 	)
 
 	testImplementation(
-			'org.springframework.boot:spring-boot-starter-security',
-			'org.springframework.security:spring-security-test',
+//			'org.springframework.boot:spring-boot-starter-security',
 			'org.springframework.boot:spring-boot-starter-test',
 			'org.assertj:assertj-core:3.11.1',
-			'com.tobedevoured.modelcitizen:spring:0.8.3'
 	)
+
 
 	annotationProcessor(
 			'org.projectlombok:lombok',
@@ -99,21 +99,21 @@ jacocoTestReport {
 	dependsOn test
 }
 
-// Настраиваем таску diffChangeLog таким образом,
-// чтобы миграции учитывали изменения в моделях
 diffChangelog {
 	dependsOn compileJava
 }
 
-// Настраиваем Liquibase
 liquibase {
 	activities {
 		main {
-			changelogFile 'src/main/resources/db/changelog/db.changelog-master.yaml'
+			changelogFile 'src/main/resources/db/changelog/db.changelog-diff.yaml'
 			url 'jdbc:h2:./taskManagerDB'
-			referenceUrl 'hibernate:spring:hexlet.code.model' +
+			referenceUrl 'hibernate:spring:hexlet.code.models.user' +
 					'?dialect=org.hibernate.dialect.H2Dialect' +
 					'&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy'
 		}
 	}
 }
+
+
+

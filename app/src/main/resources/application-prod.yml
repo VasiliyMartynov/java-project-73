@@ -1,22 +1,21 @@
 server:
   error:
     include-stacktrace: never
-
 spring:
+  liquibase:
+    contexts: prod
+    dropFirst: false
   devtools:
     restart:
       enabled: false
     livereload:
       enabled: false
-
   datasource:
     username: ${JDBC_DATABASE_USERNAME}
     password: ${JDBC_DATABASE_PASSWORD}
     url: jdbc:postgresql://${HOST}:${PORT}/${NAME}
-
   jpa:
     show-sql: false
-
 logging:
   level:
     ROOT: INFO

@@ -23,7 +23,7 @@ lint:
 	gradle checkstyleMain checkstyleTest
 
 test:
-	gradle test
+	gradle test --args='--spring.profiles.active=test'
 
 report:
 	gradle jacocoTestReport

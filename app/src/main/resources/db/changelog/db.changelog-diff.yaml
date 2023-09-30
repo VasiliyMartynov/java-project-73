@@ -1,0 +1,48 @@
+databaseChangeLog:
+- changeSet:
+    id: 1696090314425-1
+    author: vasiliy (generated)
+    changes:
+    - createSequence:
+        incrementBy: 50
+        sequenceName: users_seq
+        startValue: 1
+- changeSet:
+    id: 1696090314425-2
+    author: vasiliy (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            autoIncrement: true
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: usersPK
+            name: id
+            type: BIGINT
+        - column:
+            name: created_at
+            type: TIMESTAMP(6)
+        - column:
+            name: email
+            type: VARCHAR(255)
+        - column:
+            name: first_name
+            type: VARCHAR(255)
+        - column:
+            name: last_name
+            type: VARCHAR(255)
+        - column:
+            name: password
+            type: VARCHAR(255)
+        tableName: users
+- changeSet:
+    id: 1696090314425-3
+    author: vasiliy (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: email
+        constraintName: UC_USERSEMAIL_COL
+        tableName: users
+

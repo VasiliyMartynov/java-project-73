@@ -1,20 +1,18 @@
 server:
   port: ${PORT:8080}
-
 logging:
   level:
     root: INFO
-
 spring:
   application:
     name: taskManager
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    open-in-view: false
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+config:
+  defaultPath: /api/v1.0
+
+
+
 
 
 
