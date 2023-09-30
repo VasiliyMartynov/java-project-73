@@ -16,5 +16,5 @@ import org.mapstruct.factory.Mappers;
 public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-    UserDTO userToUerDTO(User user);
+    UserDTO userToUserDTO(User user);
 }

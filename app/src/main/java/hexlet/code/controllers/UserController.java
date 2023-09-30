@@ -6,15 +6,8 @@ import hexlet.code.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -23,37 +16,43 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
+    //GET USER BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     UserDTO getUser(@PathVariable long id) {
             return userService.getUser(id);
     }
-
+    //GET USERS
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
     List<UserDTO> getUsers() {
         return userService.getUsers();
     }
-
+    //CREATE USER
     @PostMapping(
             value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public UserDTO createUser(@RequestBody User user) {
         userService.createUser(user);
         return userService.findUserByEmail(user.getEmail());
+
     }
 
+    //DELETE USER BY ID
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
     }
 
-    @PatchMapping(path = "/{id}")
+    //UPDATE USER BY ID
+    @PutMapping(
+            value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void updateUser(@RequestBody User user) {
-        userService.updateUser(user);
+    public UserDTO updateUser(@PathVariable long id, @RequestBody User user) {
+        userService.updateUser(id, user);
+        return userService.findUserByEmail(user.getEmail());
+
     }
 
 
