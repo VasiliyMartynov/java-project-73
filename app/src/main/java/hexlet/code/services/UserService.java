@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -20,32 +19,37 @@ import java.util.stream.Collectors;
 public class UserService {
 
     @Autowired
-    private UserMapper userMapper;
+    private static UserMapper userMapper;
     @Autowired
     private UserRepository userRepository;
 
     public UserDTO getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found"));
-        return userMapper.INSTANCE.userToUserDTO(user);
-    }
-
-    public UserDTO findUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
-        return userMapper.INSTANCE.userToUserDTO(user);
+        return convertUserToUserDTO(user);
     }
 
     public List<UserDTO> getUsers() {
-        List<User> users = userRepository.findAll();
-        List<UserDTO> usersDTO = users
-                .stream()
-                .map(u -> userMapper.INSTANCE.userToUserDTO(u))
-                .collect(Collectors.toList());
-        return usersDTO;
+        try {
+            List<User> users = userRepository.findAll();
+            List<UserDTO> usersDTO = users
+                    .stream()
+                    .map(u -> userMapper.INSTANCE.userToUserDTO(u))
+                    .collect(Collectors.toList());
+            return usersDTO;
+        } catch (NullPointerException e) {
+            throw new NullPointerException("There are no any user");
+        }
     }
 
-    public void createUser(User user) {
-        userRepository.save(user);
+    public UserDTO createUser(User user) throws Exception {
+        try {
+            userRepository.save(user);
+            userRepository.flush();
+            return getUser(user.getId());
+        } catch (Exception e) {
+            throw new Exception("Something where wrong");
+        }
     }
 
     public void deleteUser(long id) {
@@ -57,7 +61,7 @@ public class UserService {
         }
     }
 
-    public void updateUser(long id, User newUser) {
+    public UserDTO updateUser(long id, User newUser) {
         try {
             User user = userRepository.findById(id).orElseThrow();
             user.setEmail(newUser.getEmail());
@@ -65,8 +69,19 @@ public class UserService {
             user.setLastName(newUser.getLastName());
             user.setPassword(newUser.getPassword());
             userRepository.save(user);
+            return convertUserToUserDTO(user);
         } catch (NoSuchElementException ex) {
             throw new NoSuchElementException(id + " not found");
         }
+    }
+
+    public UserDTO findUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        return convertUserToUserDTO(user);
+    }
+
+    //CONVERT user to userDTO
+    public static UserDTO convertUserToUserDTO(User user) {
+        return userMapper.INSTANCE.userToUserDTO(user);
     }
 }

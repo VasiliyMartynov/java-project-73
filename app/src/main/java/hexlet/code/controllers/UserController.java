@@ -32,10 +32,8 @@ public class UserController {
     @PostMapping(
             value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO createUser(@RequestBody User user) {
-        userService.createUser(user);
-        return userService.findUserByEmail(user.getEmail());
-
+    UserDTO createUser(@RequestBody User user) throws Exception {
+        return userService.createUser(user);
     }
 
     //DELETE USER BY ID
@@ -50,10 +48,6 @@ public class UserController {
             value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public UserDTO updateUser(@PathVariable long id, @RequestBody User user) {
-        userService.updateUser(id, user);
-        return userService.findUserByEmail(user.getEmail());
-
+        return userService.updateUser(id, user);
     }
-
-
 }

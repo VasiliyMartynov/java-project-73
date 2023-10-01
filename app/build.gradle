@@ -31,7 +31,9 @@ dependencies {
 			'com.querydsl:querydsl-jpa:5.0.0:jakarta',
 			'info.picocli:picocli:4.7.5',
 			'org.hibernate.validator:hibernate-validator:8.0.1.Final',
-			'org.liquibase:liquibase-core'
+			'org.liquibase:liquibase-core',
+			'org.projectlombok:lombok-mapstruct-binding:0.2.0',
+			'org.mapstruct:mapstruct:1.5.5.Final'
 	)
 
 	liquibaseRuntime(
@@ -43,9 +45,6 @@ dependencies {
 			'info.picocli:picocli:4.7.5',
 			'org.postgresql:postgresql:42.6.0'
 	)
-
-	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
 	runtimeOnly(
 			'com.h2database:h2:2.2.224',
@@ -62,7 +61,8 @@ dependencies {
 	annotationProcessor(
 			'org.projectlombok:lombok',
 			'com.querydsl:querydsl-apt:5.0.0:jakarta',
-			'jakarta.persistence:jakarta.persistence-api:3.1.0'
+			'jakarta.persistence:jakarta.persistence-api:3.1.0',
+			'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	)
 }
 

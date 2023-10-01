@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 1696090314425-1
+    id: 1696154191641-1
     author: vasiliy (generated)
     changes:
     - createSequence:
@@ -8,7 +8,7 @@ databaseChangeLog:
         sequenceName: users_seq
         startValue: 1
 - changeSet:
-    id: 1696090314425-2
+    id: 1696154191641-2
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -38,7 +38,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: users
 - changeSet:
-    id: 1696090314425-3
+    id: 1696154191641-3
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:

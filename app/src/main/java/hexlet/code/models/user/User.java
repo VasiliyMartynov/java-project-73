@@ -1,21 +1,16 @@
 package hexlet.code.models.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Column;
-import jakarta.persistence.Temporal;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 
-import java.util.Date;
+import java.sql.Timestamp;
 
-import static jakarta.persistence.GenerationType.AUTO;
-import static jakarta.persistence.TemporalType.TIMESTAMP;
+//import static jakarta.persistence.GenerationType.AUTO;
 
 @Entity
 @Table(name = "users")
@@ -26,7 +21,8 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = AUTO)
+//    @GeneratedValue(strategy = AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @EqualsAndHashCode.Include
     private Long id;
 
@@ -42,7 +38,7 @@ public class User {
     @NotBlank
     private String password;
 
-    @Temporal(TIMESTAMP)
-    private Date createdAt;
+    @CreationTimestamp
+    private Timestamp createdAt;
 
 }
