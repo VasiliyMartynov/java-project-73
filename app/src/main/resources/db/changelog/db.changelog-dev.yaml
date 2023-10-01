@@ -6,15 +6,14 @@ databaseChangeLog:
         - insert:
             columns:
               - column:
+                  name: id
+                  valueSequenceNext: user_seq
+              - column:
                   name: email
                   value: John@Smith.com
-#              - column:
-#                  name: id
-#                  valueNumeric:  1
-#              - column:
-#                  name: created_at
-#                  defaultValueComputed: CURRENT_TIMESTAMP
-#                  type: TIMESTAMP
+              - column:
+                  name: created_at
+                  value: now()
               - column:
                   name: first_name
                   value: John
@@ -28,15 +27,14 @@ databaseChangeLog:
         - insert:
             columns:
               - column:
+                  name: id
+                  valueSequenceNext: user_seq
+              - column:
                   name: email
                   value: Jack@Doe.com
-#              - column:
-#                  name: id
-#                  valueNumeric: 2
-#              - column:
-#                  name: created_at
-#                  defaultValueComputed: CURRENT_TIMESTAMP
-#                  type: TIMESTAMP
+              - column:
+                  name: created_at
+                  value: now()
               - column:
                   name: first_name
                   value: Jack

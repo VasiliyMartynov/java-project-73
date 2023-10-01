@@ -8,11 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-
-
 import java.sql.Timestamp;
-
-//import static jakarta.persistence.GenerationType.AUTO;
 
 @Entity
 @Table(name = "users")
@@ -23,7 +19,9 @@ import java.sql.Timestamp;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
+    @SequenceGenerator(name="user_generator", sequenceName = "user_seq", allocationSize=50)
+    @Column(name = "id")
     @EqualsAndHashCode.Include
     private Long id;
 

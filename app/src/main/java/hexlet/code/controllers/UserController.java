@@ -19,7 +19,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //GET USERDTO BY ID
+    //GET userDTO BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     UserDTO getUser(@PathVariable long id) {

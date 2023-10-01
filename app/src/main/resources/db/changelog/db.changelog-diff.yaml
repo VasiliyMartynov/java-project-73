@@ -1,20 +1,19 @@
 databaseChangeLog:
 - changeSet:
-    id: 1696154191641-1
+    id: 1696177739462-1
     author: vasiliy (generated)
     changes:
     - createSequence:
         incrementBy: 50
-        sequenceName: users_seq
+        sequenceName: user_seq
         startValue: 1
 - changeSet:
-    id: 1696154191641-2
+    id: 1696177739462-2
     author: vasiliy (generated)
     changes:
     - createTable:
         columns:
         - column:
-            autoIncrement: true
             constraints:
               nullable: false
               primaryKey: true
@@ -38,7 +37,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: users
 - changeSet:
-    id: 1696154191641-3
+    id: 1696177739462-3
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
