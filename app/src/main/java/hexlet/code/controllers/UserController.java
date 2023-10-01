@@ -3,6 +3,7 @@ package hexlet.code.controllers;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.models.user.User;
 import hexlet.code.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    UserDTO createUser(@RequestBody User user) throws Exception {
+    UserDTO createUser(@Valid @RequestBody User user) throws Exception {
         return userService.createUser(user);
     }
 

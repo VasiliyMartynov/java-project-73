@@ -1,6 +1,5 @@
 package hexlet.code.app;
 
-import hexlet.code.config.Config;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,10 +25,7 @@ class AppApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
 
-	@Autowired
-	private static Config config;
-
-	private static final String BASEURL = config.getDefaultPath();
+	private static final String BASEURL = "/api/v1.0";
 	@Test
 	void testRootPage() throws Exception {
 		MockHttpServletResponse response = mockMvc
