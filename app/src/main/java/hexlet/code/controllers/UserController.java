@@ -19,12 +19,19 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    //GET USER BY ID
+    //GET USERDTO BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     UserDTO getUser(@PathVariable long id) {
             return userService.getUser(id);
     }
+
+    //get user POJO
+//    @GetMapping(path = "/secret/{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    User getALldata(@PathVariable long id) {
+//        return userService.getUserAllData(id);
+//    }
 
     //GET USERS
     @GetMapping("/")

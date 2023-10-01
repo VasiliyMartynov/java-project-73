@@ -23,7 +23,6 @@ import java.sql.Timestamp;
 public class User {
 
     @Id
-//    @GeneratedValue(strategy = AUTO)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @EqualsAndHashCode.Include
     private Long id;
