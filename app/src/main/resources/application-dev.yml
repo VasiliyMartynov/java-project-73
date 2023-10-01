@@ -18,7 +18,9 @@ spring:
       path: /h2-console/
       settings:
         web-allow-others: true
-    logging:
-      level:
-        root: INFO
-        web: DEBUG
+logging:
+  level:
+    org.springframework.web: DEBUG
+    guru.springframework.controllers: DEBUG
+    org.hibernate: DEBUG
+    org: INFO

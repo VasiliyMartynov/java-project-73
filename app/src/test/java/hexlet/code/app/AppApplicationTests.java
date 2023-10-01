@@ -1,5 +1,6 @@
 package hexlet.code.app;
 
+import hexlet.code.config.Config;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +26,10 @@ class AppApplicationTests {
 	@Autowired
 	private MockMvc mockMvc;
 
-	private static final String BASEURL = "/api/v1.0";
+	@Autowired
+	private static Config config;
+
+	private static final String BASEURL = config.getDefaultPath();
 	@Test
 	void testRootPage() throws Exception {
 		MockHttpServletResponse response = mockMvc
@@ -52,7 +56,7 @@ class AppApplicationTests {
 	@Test
 	void testGetUsers() throws Exception {
 		MockHttpServletResponse response = mockMvc
-				.perform(get(BASEURL + "/users"))
+				.perform(get(BASEURL + "/users/"))
 				.andReturn()
 				.getResponse();
 
@@ -67,12 +71,13 @@ class AppApplicationTests {
 	void testCreateUser() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post(BASEURL + "/users")
+						post(BASEURL + "/users/")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"firstName\":"
-										+ " \"Jackson\","
-										+ " \"lastName\":"
-										+ " \"Bind\"}")
+								.content("{\"email\":\"testEmail@testEmail.com\""
+										+ ",\"firstName\":\"Biba\""
+										+ ",\"lastName\":\"Boba\""
+										+ ",\"password\":\"somepass\"}"
+								)
 				)
 				.andReturn()
 				.getResponse();
@@ -80,13 +85,13 @@ class AppApplicationTests {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get(BASEURL + "/users"))
+				.perform(get(BASEURL + "/users/"))
 				.andReturn()
 				.getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).contains("Jackson", "Bind");
+		assertThat(response.getContentAsString()).contains("testEmail@testEmail.com","Biba", "Boba");
 	}
 
 	@Test
@@ -106,7 +111,7 @@ class AppApplicationTests {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get(BASEURL + "/users"))
+				.perform(get(BASEURL + "/users/"))
 				.andReturn()
 				.getResponse();
 
@@ -125,7 +130,7 @@ class AppApplicationTests {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get(BASEURL + "/users"))
+				.perform(get(BASEURL + "/users/"))
 				.andReturn()
 				.getResponse();
 

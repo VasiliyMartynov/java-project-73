@@ -4,4 +4,4 @@ databaseChangeLog:
       context: dev, prod
   - include:
       file: classpath:db/changelog/db.changelog-dev.yaml
-      context: prod
+      context: dev

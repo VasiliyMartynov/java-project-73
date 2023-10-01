@@ -1,5 +1,7 @@
 server:
   port: ${PORT:8080}
+  servlet:
+    context-path: /api/v1.0
 logging:
   level:
     root: INFO
@@ -8,8 +10,9 @@ spring:
     name: taskManager
   liquibase:
     enabled: true
-config:
-  defaultPath: /api/v1.0
+
+
+
 
 
 

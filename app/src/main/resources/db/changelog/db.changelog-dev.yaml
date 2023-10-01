@@ -8,13 +8,13 @@ databaseChangeLog:
               - column:
                   name: email
                   value: John@Smith.com
-              - column:
-                  name: id
-                  valueNumeric:  1
-              - column:
-                  name: created_at
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  type: TIMESTAMP
+#              - column:
+#                  name: id
+#                  valueNumeric:  1
+#              - column:
+#                  name: created_at
+#                  defaultValueComputed: CURRENT_TIMESTAMP
+#                  type: TIMESTAMP
               - column:
                   name: first_name
                   value: John
@@ -30,13 +30,13 @@ databaseChangeLog:
               - column:
                   name: email
                   value: Jack@Doe.com
-              - column:
-                  name: id
-                  valueNumeric: 2
-              - column:
-                  name: created_at
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  type: TIMESTAMP
+#              - column:
+#                  name: id
+#                  valueNumeric: 2
+#              - column:
+#                  name: created_at
+#                  defaultValueComputed: CURRENT_TIMESTAMP
+#                  type: TIMESTAMP
               - column:
                   name: first_name
                   value: Jack
