@@ -4,12 +4,22 @@ server:
     context-path: /api/v1.0
 logging:
   level:
-    root: INFO
+    root: DEBUG
 spring:
   application:
     name: taskManager
   liquibase:
     enabled: true
+  output:
+    ansi:
+      enabled: always
+sentry:
+  dsn: https://examplePublicKey@o0.ingest.sentry.io/0
+  tracesSampleRate: 1.0
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
 
 
 

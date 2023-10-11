@@ -1,7 +1,8 @@
 package hexlet.code.controllers;
 
-import hexlet.code.dto.user.UserDTO;
-import hexlet.code.models.user.User;
+import hexlet.code.dto.UserDTO;
+import hexlet.code.models.User;
+import hexlet.code.repository.UserRepository;
 import hexlet.code.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,20 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     //GET userDTO BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     UserDTO getUser(@PathVariable long id) {
-            return userService.getUser(id);
+        return userService.getUser(id);
+    }
+
+    @GetMapping(path = "/secret/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    User getSecret(@PathVariable long id) {
+        return userRepository.findById(id).orElseThrow();
     }
 
     //get user POJO

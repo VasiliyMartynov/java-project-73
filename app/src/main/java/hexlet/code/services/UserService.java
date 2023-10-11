@@ -1,12 +1,13 @@
 package hexlet.code.services;
 
-import hexlet.code.dto.user.UserDTO;
+import hexlet.code.dto.UserDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.mapper.UserMapper;
-import hexlet.code.models.user.User;
+import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -25,6 +26,9 @@ public class UserService {
     private static UserMapper userMapper;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserDTO getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(
@@ -45,9 +49,17 @@ public class UserService {
         }
     }
 
-    public UserDTO createUser(User user) throws Exception {
+    public UserDTO createUser(User newUser) throws Exception {
         try {
-            user.setPassword(generateHash(user.getPassword()));
+            if (findUserByEmail(newUser.getEmail()) !=null) {
+                throw new Exception(
+                        "There is an account with that email adress:" + newUser.getEmail());
+            }
+            User user = new User();
+            user.setFirstName(newUser.getFirstName());
+            user.setLastName(newUser.getLastName());
+            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            user.setEmail(newUser.getEmail());
             userRepository.save(user);
             userRepository.flush();
             return getUser(user.getId());

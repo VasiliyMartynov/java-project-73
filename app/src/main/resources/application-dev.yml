@@ -20,7 +20,9 @@ spring:
         web-allow-others: true
 logging:
   level:
-    org.springframework.web: DEBUG
-    guru.springframework.controllers: DEBUG
-    org.hibernate: DEBUG
-    org: INFO
+    org:
+      springframework:
+        web: DEBUG
+        security: DEBUG
+#    guru.springframework.controllers: DEBUG
+#    org.hibernate: DEBUG
