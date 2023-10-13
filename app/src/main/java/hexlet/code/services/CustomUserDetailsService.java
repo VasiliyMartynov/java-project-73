@@ -1,7 +1,7 @@
 package hexlet.code.services;
 
 
-import hexlet.code.Config.SecurityConfig;
+import hexlet.code.config.SecurityConfig;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -52,7 +52,7 @@ public class UserController {
 //    }
 
     //GET USERS
-    @GetMapping("/")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     List<UserDTO> getUsers() {
         return userService.getUsers();
@@ -60,7 +60,7 @@ public class UserController {
 
     //CREATE USER
     @PostMapping(
-            value = "/",
+            value = "",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)

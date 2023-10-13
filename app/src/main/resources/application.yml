@@ -1,10 +1,10 @@
 server:
   port: ${PORT:8080}
   servlet:
-    context-path: /api/v1.0
+    context-path: /api
 logging:
   level:
-    root: WARN
+    root: DEBUG
 spring:
   application:
     name: taskManager

@@ -1,4 +1,4 @@
-package hexlet.code.Config;
+package hexlet.code.config;
 
 import hexlet.code.component.RsaKeyProperties;
 import org.springframework.beans.factory.annotation.Autowired;

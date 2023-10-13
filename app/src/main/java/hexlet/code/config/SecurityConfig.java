@@ -1,4 +1,4 @@
-package hexlet.code.Config;
+package hexlet.code.config;
 
 import hexlet.code.services.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/login")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/users/*")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/users/secret/*")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern("/users/")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/users")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/")).permitAll()
 //                        .requestMatchers(mvcMatcherBuilder.pattern("/index.html")).permitAll()
 //                        .requestMatchers(mvcMatcherBuilder.pattern("/assets/**")).permitAll()
