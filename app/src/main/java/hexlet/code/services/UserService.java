@@ -26,7 +26,6 @@ public class UserService {
     private static UserMapper userMapper;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -51,9 +50,9 @@ public class UserService {
 
     public UserDTO createUser(User newUser) throws Exception {
         try {
-            if (findUserByEmail(newUser.getEmail()) !=null) {
+            if (findUserByEmail(newUser.getEmail()) != null) {
                 throw new Exception(
-                        "There is an account with that email adress:" + newUser.getEmail());
+                        "There is an account with that email address:" + newUser.getEmail());
             }
             User user = new User();
             user.setFirstName(newUser.getFirstName());
