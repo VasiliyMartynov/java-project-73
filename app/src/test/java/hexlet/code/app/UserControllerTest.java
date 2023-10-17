@@ -61,7 +61,7 @@ class UserControllerTest {
 	@Test
 	void testGetUsers() throws Exception {
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 
@@ -76,24 +76,24 @@ class UserControllerTest {
 	void testCreateUser() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users/")
+						post("/users")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"email\":\"testEmail@testEmail.com\""
-										+ ",\"firstName\":\"Biba\""
-										+ ",\"lastName\":\"Boba\""
-										+ ",\"password\":\"somepass\"}"
+								.content("{\"email\":\"testEmail@testEmail.com\","
+										+ "\"firstName\":\"Biba\","
+										+ "\"lastName\":\"Boba\","
+										+ "\"password\":\"some-password\"}"
 								)
 				)
 				.andReturn()
 				.getResponse();
-
+		System.out.println("t1");
 		assertThat(responsePost.getStatus()).isEqualTo(200);
-
+		System.out.println("t2");
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
-
+		System.out.println("t3");
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
 		assertThat(response.getContentAsString()).contains("testEmail@testEmail.com", "Biba", "Boba");
@@ -103,7 +103,7 @@ class UserControllerTest {
 	void testCreateUserNotCorrectEmail() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users/")
+						post("/users")
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"Biba\""
@@ -116,7 +116,7 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
@@ -126,7 +126,7 @@ class UserControllerTest {
 	void testCreateUserNoName() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users/")
+						post("/users")
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\""
@@ -139,7 +139,7 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
@@ -149,7 +149,7 @@ class UserControllerTest {
 	void testCreateUserNoLastName() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users/")
+						post("/users")
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\"Biba"
@@ -162,7 +162,7 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
@@ -172,7 +172,7 @@ class UserControllerTest {
 	void testCreateUserNoPassword() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users/")
+						post("/users")
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\"Biba"
@@ -185,7 +185,7 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
@@ -209,7 +209,7 @@ class UserControllerTest {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 
@@ -236,7 +236,7 @@ class UserControllerTest {
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 
@@ -255,7 +255,7 @@ class UserControllerTest {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/"))
+				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
 
@@ -263,6 +263,4 @@ class UserControllerTest {
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
 		assertThat(response.getContentAsString()).doesNotContain("John", "Smith");
 	}
-
-
 }

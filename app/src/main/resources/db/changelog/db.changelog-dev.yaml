@@ -44,5 +44,5 @@ databaseChangeLog:
                   value: Doe
               - column:
                   name: password
-                  value: $2a$04$UVM9SXUzyPwjFLzV5rRGiOfn0M5TFrUQxOKZ/KSqQ0yDFi7dNEpgi
+                  value: $2a$10$5xjzr0ydCtVJYZjMlnjxiOPCaEy2EFoGoFnkInU2zwulQu3rq3.b.
             tableName: users

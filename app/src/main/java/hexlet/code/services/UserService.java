@@ -9,10 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -49,32 +45,18 @@ public class UserService {
     }
 
     public UserDTO createUser(User newUser) throws Exception {
+        if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
+            throw new Exception(
+                    "There is an account with that email address:" + newUser.getEmail());
+        }
         try {
-            if (findUserByEmail(newUser.getEmail()) != null) {
-                throw new Exception(
-                        "There is an account with that email address:" + newUser.getEmail());
-            }
-            User user = new User();
-            user.setFirstName(newUser.getFirstName());
-            user.setLastName(newUser.getLastName());
-            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-            user.setEmail(newUser.getEmail());
-            userRepository.save(user);
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            userRepository.save(newUser);
             userRepository.flush();
-            return getUser(user.getId());
+            return getUser(newUser.getId());
         } catch (Exception e) {
             throw new Exception("Something where wrong");
         }
-    }
-
-    private String generateHash(String passwordToHash) throws NoSuchAlgorithmException {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
-        MessageDigest md = MessageDigest.getInstance("SHA-512");
-        md.update(salt);
-        byte[] hashedPassword = md.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
-        return hashedPassword.toString();
     }
 
     public void deleteUser(long id) {
@@ -100,21 +82,8 @@ public class UserService {
         }
     }
 
-    public UserDTO findUserByEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow();
-        return convertUserToUserDTO(user);
-    }
-
     //CONVERT user to userDTO
     public static UserDTO convertUserToUserDTO(User user) {
         return userMapper.INSTANCE.userToUserDTO(user);
     }
-
-
-    //get user POJO
-//    public User getUserAllData(long id) {
-//        User user = userRepository.findById(id).orElseThrow(
-//                () -> new ResourceNotFoundException(id + " not found"));
-//        return user;
-//    }
 }

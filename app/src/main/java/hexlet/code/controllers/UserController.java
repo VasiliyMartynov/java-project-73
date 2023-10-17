@@ -44,13 +44,6 @@ public class UserController {
         return userRepository.findById(id).orElseThrow();
     }
 
-    //get user POJO
-//    @GetMapping(path = "/secret/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    User getALldata(@PathVariable long id) {
-//        return userService.getUserAllData(id);
-//    }
-
     //GET USERS
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)

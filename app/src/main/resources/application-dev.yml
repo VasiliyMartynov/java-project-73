@@ -12,6 +12,8 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: none
   h2:
     console:
       enabled: true
@@ -24,5 +26,5 @@ logging:
       springframework:
         web: DEBUG
         security: DEBUG
-#    guru.springframework.controllers: DEBUG
-#    org.hibernate: DEBUG
+    guru.springframework.controllers: DEBUG
+    org.hibernate: DEBUG

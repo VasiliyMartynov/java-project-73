@@ -9,7 +9,7 @@ plugins {
 	id("org.springframework.boot") version "3.1.4"
 	id("io.spring.dependency-management") version "1.1.3"
 	id("com.github.ben-manes.versions") version "0.49.0"
-//	id 'org.siouan.frontend-jdk17' version '8.0.0'
+//	id("org.siouan.frontend-jdk11") version "8.0.0"
 }
 
 group = 'hexlet.code'
@@ -33,7 +33,6 @@ dependencies {
 			'org.projectlombok:lombok',
 			'org.springframework.boot:spring-boot-configuration-processor',
 			'org.springframework.boot:spring-boot-starter-security',
-//			'org.springframework.boot:spring-boot-starter-securitySecurityConfig',
 			'org.springframework.boot:spring-boot-starter-oauth2-resource-server',
 			'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0',
 			'org.openapitools:jackson-databind-nullable:0.2.6',
@@ -43,7 +42,6 @@ dependencies {
 			'org.liquibase:liquibase-core',
 			'org.projectlombok:lombok-mapstruct-binding:0.2.0',
 			'org.mapstruct:mapstruct:1.5.5.Final'
-
 	)
 
 	liquibaseRuntime(
@@ -118,12 +116,38 @@ liquibase {
 		main {
 			changelogFile 'src/main/resources/db/changelog/db.changelog-diff.yaml'
 			url 'jdbc:h2:./taskManagerDB'
-			referenceUrl 'hibernate:spring:hexlet.code.models.user' +
+			referenceUrl 'hibernate:spring:hexlet.code.models' +
 					'?dialect=org.hibernate.dialect.H2Dialect' +
 					'&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy'
 		}
 	}
 }
 
-
-
+//frontend {
+//	nodeVersion = '16.13.1'
+//	installScript = 'install'
+//	assembleScript = 'run build'
+//	packageJsonDirectory = file("${projectDir}/frontend")
+//}
+//
+//def configFrontendTasks = {
+//	inputs.files(fileTree("$projectDir/frontend").exclude('build', 'node_modules'))
+//	outputs.dir("$buildDir/resources/main/static")
+//}
+//
+//assembleFrontend {
+//	configure configFrontendTasks
+//
+//	doLast {
+//		copy {
+//			from "$projectDir/frontend/build"
+//			into "$buildDir/resources/main/static"
+//		}
+//	}
+//}
+//
+//installFrontend {
+//	configure configFrontendTasks
+//}
+//
+//processResources.dependsOn assembleFrontend
