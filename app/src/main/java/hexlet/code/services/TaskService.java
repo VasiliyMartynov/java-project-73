@@ -3,11 +3,8 @@ package hexlet.code.services;
 import hexlet.code.dto.TaskCreateDTO;
 //import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.dto.TaskDTO;
-import hexlet.code.dto.UserDTO;
 import hexlet.code.mapper.TaskMapper;
-import hexlet.code.mapper.UserMapper;
 import hexlet.code.models.Task;
-import hexlet.code.models.User;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
@@ -45,11 +42,10 @@ public class TaskService {
     public List<TaskDTO> getTasks() {
         try {
             List<Task> tasks = taskRepository.findAll();
-            List<TaskDTO> tasksDTO = tasks
+            return tasks
                     .stream()
                     .map(t -> taskMapper.INSTANCE.taskToTaskDTO(t))
                     .collect(Collectors.toList());
-            return tasksDTO;
         } catch (NullPointerException e) {
             throw new NullPointerException("There are no any user");
         }
