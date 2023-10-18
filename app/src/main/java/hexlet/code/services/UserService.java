@@ -1,7 +1,7 @@
 package hexlet.code.services;
 
 import hexlet.code.dto.UserDTO;
-import hexlet.code.exceptions.ResourceNotFoundException;
+//import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
@@ -27,18 +27,18 @@ public class UserService {
 
     public UserDTO getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(id + " not found"));
+//                () -> new ResourceNotFoundException(id + " not found")
+        );
         return convertUserToUserDTO(user);
     }
 
     public List<UserDTO> getUsers() {
         try {
             List<User> users = userRepository.findAll();
-            List<UserDTO> usersDTO = users
+            return users
                     .stream()
                     .map(u -> userMapper.INSTANCE.userToUserDTO(u))
                     .collect(Collectors.toList());
-            return usersDTO;
         } catch (NullPointerException e) {
             throw new NullPointerException("There are no any user");
         }

@@ -37,7 +37,7 @@ public class TaskStatusController {
         return taskStatusService.getTaskStatuses();
     }
 
-    //CREATE TaskStatus
+    //CREATE Task Status
     @PostMapping(
             value = "",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -47,7 +47,7 @@ public class TaskStatusController {
         return taskStatusService.createTaskStatus(task);
     }
 
-    //UPDATE USER BY ID
+    //UPDATE Task Status BY ID
     @PutMapping(
             value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -57,7 +57,7 @@ public class TaskStatusController {
         return taskStatusService.updateTaskStatus(id, task);
     }
 
-    //DELETE USER BY ID
+    //DELETE Task Status BY ID
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     void deleteTaskStatus(@PathVariable long id) {

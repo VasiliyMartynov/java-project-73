@@ -1,6 +1,6 @@
 package hexlet.code.services;
 
-import hexlet.code.exceptions.ResourceNotFoundException;
+//import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +16,11 @@ public class TaskStatusService {
 
     @Autowired
     private TaskStatusRepository taskStatusRepository;
+
     public TaskStatus getTaskStatus(long id) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(id + " not found"));
-        return taskStatus;
+        return taskStatusRepository.findById(id).orElseThrow(
+//                () -> new ResourceNotFoundException(id + " not found")
+        );
     }
 
     public List<TaskStatus> getTaskStatuses() {
@@ -30,15 +31,15 @@ public class TaskStatusService {
         }
     }
 
-    public TaskStatus createTaskStatus(TaskStatus newTask) throws Exception {
-        if (taskStatusRepository.findByName(newTask.getName()).isPresent()) {
+    public TaskStatus createTaskStatus(TaskStatus newTaskStatus) throws Exception {
+        if (taskStatusRepository.findByName(newTaskStatus.getName()).isPresent()) {
             throw new Exception(
-                    "There is an account with that email address:" + newTask.getName());
+                    "There is an task status:" + newTaskStatus.getName());
         }
         try {
-            taskStatusRepository.save(newTask);
+            taskStatusRepository.save(newTaskStatus);
             taskStatusRepository.flush();
-            return getTaskStatus(newTask.getId());
+            return getTaskStatus(newTaskStatus.getId());
         } catch (Exception e) {
             throw new Exception("Something where wrong");
         }

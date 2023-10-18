@@ -46,3 +46,51 @@ databaseChangeLog:
                   name: password
                   value: $2a$10$5xjzr0ydCtVJYZjMlnjxiOPCaEy2EFoGoFnkInU2zwulQu3rq3.b.
             tableName: users
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: statuses_seq
+              - column:
+                  name: name
+                  value: новый
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: statuses_seq
+              - column:
+                  name: name
+                  value: в работе
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: statuses_seq
+              - column:
+                  name: name
+                  value: на тестировании
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: statuses_seq
+              - column:
+                  name: name
+                  value: завершен
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses

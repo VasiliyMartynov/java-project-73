@@ -2,6 +2,7 @@ package hexlet.code.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +16,7 @@ public class TaskStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "statuses_generator")
-    @SequenceGenerator(name = "statuses_generator", sequenceName = "statuses_seq", allocationSize = 50)
+    @SequenceGenerator(name = "statuses_generator", sequenceName = "statuses_seq", allocationSize = 1)
     @Column(name = "id")
     @EqualsAndHashCode.Include
     private Long id;
@@ -26,5 +27,4 @@ public class TaskStatus {
 
     @CreationTimestamp
     private Timestamp createdAt;
-
 }
