@@ -63,6 +63,9 @@ public class TaskService {
             task.setAuthor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
             task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
+            if (!newTask.getLabels().isEmpty()) {
+                task.setLabels(newTask.getLabels());
+            }
             taskRepository.save(task);
             taskRepository.flush();
             return getTask(task.getId());

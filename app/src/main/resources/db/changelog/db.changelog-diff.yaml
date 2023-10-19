@@ -1,30 +1,50 @@
 databaseChangeLog:
 - changeSet:
-    id: 1697657509662-1
+    id: 1697719962049-1
     author: vasiliy (generated)
     changes:
     - createSequence:
-        incrementBy: 50
+        incrementBy: 1
         sequenceName: statuses_seq
         startValue: 1
 - changeSet:
-    id: 1697657509662-2
+    id: 1697719962049-2
     author: vasiliy (generated)
     changes:
     - createSequence:
-        incrementBy: 50
+        incrementBy: 1
         sequenceName: task_seq
         startValue: 1
 - changeSet:
-    id: 1697657509662-3
+    id: 1697719962049-3
     author: vasiliy (generated)
     changes:
     - createSequence:
-        incrementBy: 50
+        incrementBy: 1
         sequenceName: user_seq
         startValue: 1
 - changeSet:
-    id: 1697657509662-4
+    id: 1697719962049-4
+    author: vasiliy (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: labelsPK
+            name: id
+            type: BIGINT
+        - column:
+            name: created_at
+            type: TIMESTAMP(6)
+        - column:
+            name: name
+            type: VARCHAR(255)
+        tableName: labels
+- changeSet:
+    id: 1697719962049-5
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -44,7 +64,28 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: statuses
 - changeSet:
-    id: 1697657509662-5
+    id: 1697719962049-6
+    author: vasiliy (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: task_labelPK
+            name: task_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: task_labelPK
+            name: label_id
+            type: BIGINT
+        tableName: task_label
+- changeSet:
+    id: 1697719962049-7
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -76,7 +117,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: tasks
 - changeSet:
-    id: 1697657509662-6
+    id: 1697719962049-8
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -105,7 +146,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: users
 - changeSet:
-    id: 1697657509662-7
+    id: 1697719962049-9
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -113,7 +154,7 @@ databaseChangeLog:
         constraintName: UC_TASKSAUTHOR_ID_COL
         tableName: tasks
 - changeSet:
-    id: 1697657509662-8
+    id: 1697719962049-10
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -121,7 +162,7 @@ databaseChangeLog:
         constraintName: UC_TASKSEXECUTOR_ID_COL
         tableName: tasks
 - changeSet:
-    id: 1697657509662-9
+    id: 1697719962049-11
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -129,7 +170,7 @@ databaseChangeLog:
         constraintName: UC_TASKSTASK_STATUS_ID_COL
         tableName: tasks
 - changeSet:
-    id: 1697657509662-10
+    id: 1697719962049-12
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -137,7 +178,20 @@ databaseChangeLog:
         constraintName: UC_USERSEMAIL_COL
         tableName: users
 - changeSet:
-    id: 1697657509662-11
+    id: 1697719962049-13
+    author: vasiliy (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: task_id
+        baseTableName: task_label
+        constraintName: FK45j1msvaecla2batb854mv44o
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: tasks
+        validate: true
+- changeSet:
+    id: 1697719962049-14
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -150,7 +204,20 @@ databaseChangeLog:
         referencedTableName: users
         validate: true
 - changeSet:
-    id: 1697657509662-12
+    id: 1697719962049-15
+    author: vasiliy (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: label_id
+        baseTableName: task_label
+        constraintName: FKdcng3qpmqco6u3ofi7i939bnx
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: labels
+        validate: true
+- changeSet:
+    id: 1697719962049-16
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -163,7 +230,7 @@ databaseChangeLog:
         referencedTableName: statuses
         validate: true
 - changeSet:
-    id: 1697657509662-13
+    id: 1697719962049-17
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:

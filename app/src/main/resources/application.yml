@@ -4,7 +4,7 @@ server:
     context-path: /api
 logging:
   level:
-    root: DEBUG
+    root: INFO
 spring:
   application:
     name: taskManager

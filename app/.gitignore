@@ -106,3 +106,4 @@ Temporary Items
 .apdisk
 /node_modules/
 /node/
+/frontend/node_modules/
