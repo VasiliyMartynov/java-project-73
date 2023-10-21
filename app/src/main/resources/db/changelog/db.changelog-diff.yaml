@@ -1,14 +1,22 @@
 databaseChangeLog:
 - changeSet:
-    id: 1697719962049-1
+    id: 1697894655037-1
     author: vasiliy (generated)
     changes:
     - createSequence:
         incrementBy: 1
-        sequenceName: statuses_seq
+        sequenceName: label_seq
         startValue: 1
 - changeSet:
-    id: 1697719962049-2
+    id: 1697894655037-2
+    author: vasiliy (generated)
+    changes:
+    - createSequence:
+        incrementBy: 1
+        sequenceName: status_seq
+        startValue: 1
+- changeSet:
+    id: 1697894655037-3
     author: vasiliy (generated)
     changes:
     - createSequence:
@@ -16,7 +24,7 @@ databaseChangeLog:
         sequenceName: task_seq
         startValue: 1
 - changeSet:
-    id: 1697719962049-3
+    id: 1697894655037-4
     author: vasiliy (generated)
     changes:
     - createSequence:
@@ -24,7 +32,7 @@ databaseChangeLog:
         sequenceName: user_seq
         startValue: 1
 - changeSet:
-    id: 1697719962049-4
+    id: 1697894655037-5
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -44,7 +52,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: labels
 - changeSet:
-    id: 1697719962049-5
+    id: 1697894655037-6
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -64,7 +72,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: statuses
 - changeSet:
-    id: 1697719962049-6
+    id: 1697894655037-7
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -85,7 +93,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: task_label
 - changeSet:
-    id: 1697719962049-7
+    id: 1697894655037-8
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -117,7 +125,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: tasks
 - changeSet:
-    id: 1697719962049-8
+    id: 1697894655037-9
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -146,7 +154,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: users
 - changeSet:
-    id: 1697719962049-9
+    id: 1697894655037-10
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -154,7 +162,7 @@ databaseChangeLog:
         constraintName: UC_TASKSAUTHOR_ID_COL
         tableName: tasks
 - changeSet:
-    id: 1697719962049-10
+    id: 1697894655037-11
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -162,7 +170,7 @@ databaseChangeLog:
         constraintName: UC_TASKSEXECUTOR_ID_COL
         tableName: tasks
 - changeSet:
-    id: 1697719962049-11
+    id: 1697894655037-12
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -170,7 +178,7 @@ databaseChangeLog:
         constraintName: UC_TASKSTASK_STATUS_ID_COL
         tableName: tasks
 - changeSet:
-    id: 1697719962049-12
+    id: 1697894655037-13
     author: vasiliy (generated)
     changes:
     - addUniqueConstraint:
@@ -178,7 +186,7 @@ databaseChangeLog:
         constraintName: UC_USERSEMAIL_COL
         tableName: users
 - changeSet:
-    id: 1697719962049-13
+    id: 1697894655037-14
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -191,7 +199,7 @@ databaseChangeLog:
         referencedTableName: tasks
         validate: true
 - changeSet:
-    id: 1697719962049-14
+    id: 1697894655037-15
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -204,7 +212,7 @@ databaseChangeLog:
         referencedTableName: users
         validate: true
 - changeSet:
-    id: 1697719962049-15
+    id: 1697894655037-16
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -217,7 +225,7 @@ databaseChangeLog:
         referencedTableName: labels
         validate: true
 - changeSet:
-    id: 1697719962049-16
+    id: 1697894655037-17
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -230,7 +238,7 @@ databaseChangeLog:
         referencedTableName: statuses
         validate: true
 - changeSet:
-    id: 1697719962049-17
+    id: 1697894655037-18
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:

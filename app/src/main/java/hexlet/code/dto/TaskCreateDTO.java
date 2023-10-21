@@ -1,13 +1,13 @@
 package hexlet.code.dto;
 
-import hexlet.code.models.Label;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
+
 public class TaskCreateDTO {
 
     @NotEmpty
@@ -20,6 +20,6 @@ public class TaskCreateDTO {
 
     private int taskStatusId;
 
-    private Set<Label> labels;
+    private Set<Integer> labelsId = new HashSet<>();
 
 }

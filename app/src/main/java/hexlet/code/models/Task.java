@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,6 +15,8 @@ import java.util.Set;
 @Entity
 @Table(name = "tasks")
 @Data
+@EqualsAndHashCode
+@Builder
 public class Task {
 
     @Id

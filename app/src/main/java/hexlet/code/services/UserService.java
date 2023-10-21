@@ -1,7 +1,7 @@
 package hexlet.code.services;
 
 import hexlet.code.dto.UserDTO;
-//import hexlet.code.exceptions.ResourceNotFoundException;
+import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
@@ -27,7 +27,7 @@ public class UserService {
 
     public UserDTO getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(
-//                () -> new ResourceNotFoundException(id + " not found")
+                () -> new ResourceNotFoundException(id + " not found")
         );
         return convertUserToUserDTO(user);
     }

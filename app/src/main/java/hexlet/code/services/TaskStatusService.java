@@ -1,6 +1,6 @@
 package hexlet.code.services;
 
-//import hexlet.code.exceptions.ResourceNotFoundException;
+import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class TaskStatusService {
 
     public TaskStatus getTaskStatus(long id) {
         return taskStatusRepository.findById(id).orElseThrow(
-//                () -> new ResourceNotFoundException(id + " not found")
+                () -> new ResourceNotFoundException(id + " not found")
         );
     }
 

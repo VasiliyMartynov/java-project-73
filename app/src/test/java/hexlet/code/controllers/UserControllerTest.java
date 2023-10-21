@@ -1,5 +1,10 @@
-package hexlet.code.app;
+package hexlet.code.controllers;
 
+import hexlet.code.models.User;
+import hexlet.code.repository.UserRepository;
+import hexlet.code.utils.InstansioModelGenerator;
+import org.instancio.Instancio;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,32 +27,47 @@ class UserControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private InstansioModelGenerator instansioModelGenerator;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	private User user;
+
+	@BeforeEach
+	public void setUp() {
+		user = Instancio.of(instansioModelGenerator.getUserModel())
+				.create();
+	}
+
 	@Test
 	void testGetUserIfUserPersist() throws Exception {
+		userRepository.save(user);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/1"))
+				.perform(get("/users/" + user.getId()))
 				.andReturn()
 				.getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).contains("John", "Smith");
+		assertThat(response.getContentAsString()).contains(user.getFirstName(), user.getLastName());
 	}
 
 	@Test
-	void testGetUserIfUserNotPersistAndRequestIsCorrect() throws Exception {
+	void testGetUserIfUserNotPersist() throws Exception {
+		var nonExistentID  = userRepository.findAll().size() + 1;
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/99"))
+				.perform(get("/users/" + nonExistentID))
 				.andReturn()
 				.getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(422);
-		assertThat(response.getContentType()).isNotEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).doesNotContain("John", "Smith");
 	}
 
 	@Test
 	void testGetUserIfUserNotPersistAndRequestIsNotCorrect() throws Exception {
+		userRepository.save(user);
 		MockHttpServletResponse response = mockMvc
 				.perform(get("/users/a"))
 				.andReturn()
@@ -55,11 +75,15 @@ class UserControllerTest {
 
 		assertThat(response.getStatus()).isEqualTo(400);
 		assertThat(response.getContentType()).isNotEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).doesNotContain("John", "Smith");
+		assertThat(response.getContentAsString()).doesNotContain(user.getFirstName(), user.getLastName());
 	}
 
 	@Test
 	void testGetUsers() throws Exception {
+		userRepository.save(user);
+		var user2 = Instancio.of(instansioModelGenerator.getUserModel())
+				.create();
+		userRepository.save(user2);
 		MockHttpServletResponse response = mockMvc
 				.perform(get("/users"))
 				.andReturn()
@@ -67,8 +91,8 @@ class UserControllerTest {
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).contains("John", "Smith");
-		assertThat(response.getContentAsString()).contains("Jack", "Doe");
+		assertThat(response.getContentAsString()).contains(user.getFirstName(), user.getLastName());
+		assertThat(response.getContentAsString()).contains(user2.getFirstName(), user2.getLastName());
 	}
 
 
@@ -86,14 +110,11 @@ class UserControllerTest {
 				)
 				.andReturn()
 				.getResponse();
-		System.out.println("t1");
 		assertThat(responsePost.getStatus()).isEqualTo(200);
-		System.out.println("t2");
 		MockHttpServletResponse response = mockMvc
 				.perform(get("/users"))
 				.andReturn()
 				.getResponse();
-		System.out.println("t3");
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
 		assertThat(response.getContentAsString()).contains("testEmail@testEmail.com", "Biba", "Boba");
@@ -193,9 +214,10 @@ class UserControllerTest {
 
 	@Test
 	void testUpdatesUser() throws Exception {
+		userRepository.save(user);
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						put("/users/1")
+						put("/users/" + user.getId())
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@testEmail.com\""
 										+ ",\"firstName\":\"Biba\""
@@ -220,9 +242,10 @@ class UserControllerTest {
 
 	@Test
 	void testUpdatesUserNotCorrecEmail() throws Exception {
+		userRepository.save(user);
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						put("/users/1")
+						put("/users/" + user.getId())
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\"Biba"
@@ -247,8 +270,9 @@ class UserControllerTest {
 
 	@Test
 	void testDeletePerson() throws Exception {
+		userRepository.save(user);
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(delete("/users/1"))
+				.perform(delete("/users/" + user.getId()))
 				.andReturn()
 				.getResponse();
 
@@ -261,6 +285,6 @@ class UserControllerTest {
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).doesNotContain("John", "Smith");
+		assertThat(response.getContentAsString()).doesNotContain(user.getFirstName(), user.getLastName());
 	}
 }

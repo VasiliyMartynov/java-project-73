@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "users")
 @Data
+@EqualsAndHashCode
 public class User {
 
     @Id

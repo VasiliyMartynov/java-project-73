@@ -11,11 +11,12 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "statuses")
 @Data
+@EqualsAndHashCode
 public class TaskStatus {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "statuses_generator")
-    @SequenceGenerator(name = "statuses_generator", sequenceName = "statuses_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "status_generator")
+    @SequenceGenerator(name = "status_generator", sequenceName = "status_seq", allocationSize = 1)
     @Column(name = "id")
     @EqualsAndHashCode.Include
     private Long id;

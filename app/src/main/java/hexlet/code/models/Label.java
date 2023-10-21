@@ -8,17 +8,17 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "labels")
 @Data
+@EqualsAndHashCode
 public class Label {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_generator")
-    @SequenceGenerator(name = "task_generator", sequenceName = "task_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "label_generator")
+    @SequenceGenerator(name = "label_generator", sequenceName = "label_seq", allocationSize = 1)
     @Column(name = "id")
     @EqualsAndHashCode.Include
     private Long id;
