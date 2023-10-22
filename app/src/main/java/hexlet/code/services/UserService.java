@@ -1,8 +1,9 @@
 package hexlet.code.services;
 
-import hexlet.code.dto.UserDTO;
+import hexlet.code.dto.user.UserCreateDTO;
+import hexlet.code.dto.user.UserShowDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
-import hexlet.code.mapper.UserMapper;
+import hexlet.code.dto.user.UserMapper;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,35 +26,36 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserDTO getUser(long id) {
+    public UserShowDTO getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found")
         );
-        return convertUserToUserDTO(user);
+        return userMapper.INSTANCE.toUserShowDTO(user);
     }
 
-    public List<UserDTO> getUsers() {
+    public List<UserShowDTO> getUsers() {
         try {
             List<User> users = userRepository.findAll();
             return users
                     .stream()
-                    .map(u -> userMapper.INSTANCE.userToUserDTO(u))
+                    .map(u -> userMapper.INSTANCE.toUserShowDTO(u))
                     .collect(Collectors.toList());
         } catch (NullPointerException e) {
             throw new NullPointerException("There are no any user");
         }
     }
 
-    public UserDTO createUser(User newUser) throws Exception {
+    public UserShowDTO createUser(UserCreateDTO newUser) throws Exception {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
             throw new Exception(
                     "There is an account with that email address:" + newUser.getEmail());
         }
         try {
-            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
-            userRepository.save(newUser);
+            var user = userMapper.INSTANCE.toUser(newUser);
+            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+            userRepository.save(user);
             userRepository.flush();
-            return getUser(newUser.getId());
+            return userMapper.INSTANCE.toUserShowDTO(user);
         } catch (Exception e) {
             throw new Exception("Something where wrong");
         }
@@ -68,7 +70,7 @@ public class UserService {
         }
     }
 
-    public UserDTO updateUser(long id, User newUser) {
+    public UserShowDTO updateUser(long id, User newUser) {
         try {
             User user = userRepository.findById(id).orElseThrow();
             user.setEmail(newUser.getEmail());
@@ -76,14 +78,9 @@ public class UserService {
             user.setLastName(newUser.getLastName());
             user.setPassword(newUser.getPassword());
             userRepository.save(user);
-            return convertUserToUserDTO(user);
+            return userMapper.INSTANCE.toUserShowDTO(user);
         } catch (NoSuchElementException ex) {
             throw new NoSuchElementException(id + " not found");
         }
-    }
-
-    //CONVERT user to userDTO
-    public static UserDTO convertUserToUserDTO(User user) {
-        return userMapper.INSTANCE.userToUserDTO(user);
     }
 }

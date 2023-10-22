@@ -168,15 +168,15 @@ class TaskControllerTest {
 	}
 
 	@Test
-	void testCreateTaskNotCorrectEmail() throws Exception {
+	void testCreateTaskNoExecutorId() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"email\":\"testEmail@\""
-										+ ",\"firstName\":\"Biba\""
-										+ ",\"lastName\":\"Boba\""
-										+ ",\"password\":\"somepass\"}"
+								.content("{\"name\":\"task name\","
+										+ "\"description\":\"task description\","
+										+ "\"executorId\":,"
+										+ "\"taskStatusId\":" + user2.getId() + "}"
 								)
 				)
 				.andReturn()
@@ -191,15 +191,15 @@ class TaskControllerTest {
 	}
 
 	@Test
-	void testCreateTaskNoName() throws Exception {
+	void testCreateEmptyName() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"email\":\"testEmail@\""
-										+ ",\"firstName\":\"\""
-										+ ",\"lastName\":\"Boba\""
-										+ ",\"password\":\"somepass\"}"
+								.content("{\"name\":\"\","
+										+ "\"description\":\"task description\","
+										+ "\"executorId\":"+ user1.getId() + ","
+										+ "\"taskStatusId\":" + user2.getId() + "}"
 								)
 				)
 				.andReturn()
@@ -214,15 +214,15 @@ class TaskControllerTest {
 	}
 
 	@Test
-	void testCreateTaskNoLastName() throws Exception {
+	void testCreateTaskNoStatus() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"email\":\"testEmail@\""
-										+ ",\"firstName\":\"\"Biba"
-										+ ",\"lastName\":\"\""
-										+ ",\"password\":\"somepass\"}"
+								.content("{\"name\":\"task name\","
+										+ "\"description\":\"task description\","
+										+ "\"executorId\":"+ user1.getId() + ","
+										+ "\"taskStatusId\":}"
 								)
 				)
 				.andReturn()
@@ -237,16 +237,12 @@ class TaskControllerTest {
 	}
 
 	@Test
-	void testCreateTaskNoPassword() throws Exception {
+	void testCreateTaskNoJson() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"email\":\"testEmail@\""
-										+ ",\"firstName\":\"\"Biba"
-										+ ",\"lastName\":\"\""
-										+ ",\"password\":\"\"}"
-								)
+								.content("")
 				)
 				.andReturn()
 				.getResponse();
@@ -259,60 +255,62 @@ class TaskControllerTest {
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
 	}
 
-//	@Test
-//	void testUpdatesTask() throws Exception {
-//		MockHttpServletResponse responsePost = mockMvc
-//				.perform(
-//						put("/tasks/1")
-//								.contentType(MediaType.APPLICATION_JSON)
-//								.content("{\"email\":\"testEmail@testEmail.com\""
-//										+ ",\"firstName\":\"Biba\""
-//										+ ",\"lastName\":\"Boba\""
-//										+ ",\"password\":\"somepass\"}"
-//								)
-//				)
-//				.andReturn()
-//				.getResponse();
-//
-//		assertThat(responsePost.getStatus()).isEqualTo(200);
-//
-//		MockHttpServletResponse response = mockMvc
-//				.perform(get("/tasks"))
-//				.andReturn()
-//				.getResponse();
-//
-//		assertThat(response.getStatus()).isEqualTo(200);
-//		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-//		assertThat(response.getContentAsString()).contains("testEmail@testEmail.com", "Biba", "Boba");
-//	}
-//
-//	@Test
-//	void testUpdatesTaskNotCorrecEmail() throws Exception {
-//		MockHttpServletResponse responsePost = mockMvc
-//				.perform(
-//						put("/tasks/1")
-//								.contentType(MediaType.APPLICATION_JSON)
-//								.content("{\"email\":\"testEmail@\""
-//										+ ",\"firstName\":\"\"Biba"
-//										+ ",\"lastName\":\"\"Boba"
-//										+ ",\"password\":\"\"}"
-//								)
-//				)
-//				.andReturn()
-//				.getResponse();
-//
-//		assertThat(responsePost.getStatus()).isEqualTo(400);
-//
-//		MockHttpServletResponse response = mockMvc
-//				.perform(get("/tasks"))
-//				.andReturn()
-//				.getResponse();
-//
-//		assertThat(response.getStatus()).isEqualTo(200);
-//		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-//		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
-//	}
-//
+	@Test
+	void testUpdatesTask() throws Exception {
+		taskRepository.save(taskWithLabels);
+		MockHttpServletResponse responsePost = mockMvc
+				.perform(
+						put("/tasks/" +  taskWithLabels.getId())
+								.contentType(MediaType.APPLICATION_JSON)
+								.content("{\"name\":\"new tasks name\","
+										+ "\"description\":\"new task description\","
+										+ "\"executorId\":"+ user1.getId() + ","
+										+ "\"taskStatusId\":"+ user1.getId() + "}"
+								)
+				)
+				.andReturn()
+				.getResponse();
+
+		assertThat(responsePost.getStatus()).isEqualTo(200);
+
+		MockHttpServletResponse response = mockMvc
+				.perform(get("/tasks"))
+				.andReturn()
+				.getResponse();
+
+		assertThat(response.getStatus()).isEqualTo(200);
+		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
+		assertThat(response.getContentAsString()).contains("new tasks name", "new task description");
+	}
+
+	@Test
+	void testUpdatesTaskNotCorrecTaskStatusId() throws Exception {
+		taskRepository.save(taskWithLabels);
+		MockHttpServletResponse responsePost = mockMvc
+				.perform(
+						put("/tasks/" +  taskWithLabels.getId())
+								.contentType(MediaType.APPLICATION_JSON)
+								.content("{\"name\":\"new tasks name\","
+										+ "\"description\":\"new task description\","
+										+ "\"executorId\":"+ user2.getId() + ","
+										+ "\"taskStatusId\":,}"
+								)
+				)
+				.andReturn()
+				.getResponse();
+
+		assertThat(responsePost.getStatus()).isEqualTo(400);
+
+		MockHttpServletResponse response = mockMvc
+				.perform(get("/tasks"))
+				.andReturn()
+				.getResponse();
+
+		assertThat(response.getStatus()).isEqualTo(200);
+		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
+		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
+	}
+
 	@Test
 	void testDeleteTask() throws Exception {
 		taskRepository.save(taskWithLabels);

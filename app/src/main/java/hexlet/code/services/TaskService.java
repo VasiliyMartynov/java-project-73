@@ -1,9 +1,9 @@
 package hexlet.code.services;
 
-import hexlet.code.dto.TaskCreateDTO;
+import hexlet.code.dto.task.TaskCreateDTO;
+import hexlet.code.dto.task.TaskShowDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
-import hexlet.code.dto.TaskDTO;
-import hexlet.code.mapper.TaskMapper;
+import hexlet.code.dto.task.TaskMapper;
 import hexlet.code.models.Label;
 import hexlet.code.models.Task;
 import hexlet.code.repository.LabelRepository;
@@ -38,14 +38,14 @@ public class TaskService {
     @Autowired
     private TaskStatusRepository taskStatusRepository;
 
-    public TaskDTO getTask(long id) {
+    public TaskShowDTO getTask(long id) {
         Task t = taskRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found")
         );
         return convertTaskToTaskDTO(t);
     }
 
-    public List<TaskDTO> getTasks() {
+    public List<TaskShowDTO> getTasks() {
         try {
             List<Task> tasks = taskRepository.findAll();
             return tasks
@@ -57,7 +57,7 @@ public class TaskService {
         }
     }
 
-    public TaskDTO createTask(TaskCreateDTO newTask) throws Exception {
+    public TaskShowDTO createTask(TaskCreateDTO newTask) throws Exception {
         if (taskRepository.findByName(newTask.getName()).isPresent()) {
             throw new Exception(
                     "There is task:" + newTask.getName());
@@ -86,13 +86,21 @@ public class TaskService {
         }
     }
 
-    public TaskDTO updateTask(long id, TaskCreateDTO newTask) {
+    public TaskShowDTO updateTask(long id, TaskCreateDTO newTask) {
         try {
             Task task = taskRepository.findById(id).orElseThrow();
+            task.setAuthor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
             task.setName(newTask.getName());
             task.setDescription(newTask.getDescription());
             task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
+            if (!newTask.getLabelsId().isEmpty()) {
+                Set<Label> labels = newTask.getLabelsId()
+                        .stream()
+                        .map(l -> labelRepository.findById(l.longValue()).orElseThrow())
+                        .collect(Collectors.toSet());
+                task.setLabels(labels);
+            }
             taskRepository.save(task);
             return convertTaskToTaskDTO(task);
 
@@ -111,7 +119,7 @@ public class TaskService {
     }
 
     //CONVERT task to taskDTO
-    public static TaskDTO convertTaskToTaskDTO(Task task) {
+    public static TaskShowDTO convertTaskToTaskDTO(Task task) {
         return TaskMapper.INSTANCE.taskToTaskDTO(task);
     }
 }

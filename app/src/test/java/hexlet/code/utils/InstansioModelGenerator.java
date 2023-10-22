@@ -17,7 +17,6 @@ import static org.instancio.Select.field;
 @Component
 public class InstansioModelGenerator {
     private Model<Label> labelModel;
-    private Model<Task> taskModel;
     private Model<TaskStatus> taskStatusModel;
     private Model<User> userModel;
 

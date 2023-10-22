@@ -1,6 +1,7 @@
 package hexlet.code.controllers;
 
-import hexlet.code.dto.UserDTO;
+import hexlet.code.dto.user.UserCreateDTO;
+import hexlet.code.dto.user.UserShowDTO;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.services.UserService;
@@ -34,7 +35,7 @@ public class UserController {
     //GET userDTO BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    UserDTO getUser(@PathVariable long id) {
+    UserShowDTO getUser(@PathVariable long id) {
         return userService.getUser(id);
     }
 
@@ -47,7 +48,7 @@ public class UserController {
     //GET USERS
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    List<UserDTO> getUsers() {
+    List<UserShowDTO> getUsers() {
         return userService.getUsers();
     }
 
@@ -57,8 +58,8 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    UserDTO createUser(@Valid @RequestBody User user) throws Exception {
-        return userService.createUser(user);
+    UserShowDTO createUser(@Valid @RequestBody UserCreateDTO u) throws Exception {
+        return userService.createUser(u);
     }
 
     //DELETE USER BY ID
@@ -74,7 +75,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO updateUser(@PathVariable long id, @RequestBody User user) {
+    public UserShowDTO updateUser(@PathVariable long id, @RequestBody User user) {
         return userService.updateUser(id, user);
     }
 }

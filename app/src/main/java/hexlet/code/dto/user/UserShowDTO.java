@@ -1,14 +1,16 @@
-package hexlet.code.dto;
+package hexlet.code.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import java.util.Date;
+
+import java.sql.Timestamp;
 
 @Data
-public class UserDTO {
+public class UserShowDTO {
     private Long id;
 
     @Email
@@ -22,5 +24,6 @@ public class UserDTO {
     @Size(min = 1)
     private String lastName;
 
-    private Date createdAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ")
+    private Timestamp createdAt;
 }

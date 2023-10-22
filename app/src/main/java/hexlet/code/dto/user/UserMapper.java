@@ -1,19 +1,22 @@
-package hexlet.code.mapper;
+package hexlet.code.dto.user;
 
-import hexlet.code.dto.TaskDTO;
-import hexlet.code.models.Task;
+import hexlet.code.models.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
+
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-public interface TaskMapper {
-    TaskMapper INSTANCE = Mappers.getMapper(TaskMapper.class);
-    TaskDTO taskToTaskDTO(Task task);
+public interface UserMapper {
+
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+    UserShowDTO toUserShowDTO(User u);
+
+    User toUser(UserCreateDTO u);
 }

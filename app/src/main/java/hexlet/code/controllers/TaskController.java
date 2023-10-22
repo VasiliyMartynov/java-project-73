@@ -1,7 +1,7 @@
 package hexlet.code.controllers;
 
-import hexlet.code.dto.TaskCreateDTO;
-import hexlet.code.dto.TaskDTO;
+import hexlet.code.dto.task.TaskCreateDTO;
+import hexlet.code.dto.task.TaskShowDTO;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.services.TaskService;
 import jakarta.validation.Valid;
@@ -27,14 +27,14 @@ public class TaskController {
     //GET Task BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    TaskDTO getTask(@PathVariable long id) {
+    TaskShowDTO getTask(@PathVariable long id) {
         return taskService.getTask(id);
     }
 
     //GET Tasks
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    List<TaskDTO> getTasks() {
+    List<TaskShowDTO> getTasks() {
         return taskService.getTasks();
     }
 
@@ -44,7 +44,7 @@ public class TaskController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    TaskDTO createTask(@Valid @RequestBody TaskCreateDTO taskDTO) throws Exception {
+    TaskShowDTO createTask(@Valid @RequestBody TaskCreateDTO taskDTO) throws Exception {
         return taskService.createTask(taskDTO);
     }
 
@@ -54,7 +54,7 @@ public class TaskController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    TaskDTO updateTask(@PathVariable long id, @RequestBody TaskCreateDTO task) {
+    TaskShowDTO updateTask(@PathVariable long id, @RequestBody TaskCreateDTO task) {
         return taskService.updateTask(id, task);
     }
 

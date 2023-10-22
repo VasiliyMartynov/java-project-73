@@ -1,4 +1,4 @@
-package hexlet.code.handler;
+package hexlet.code.exceptions.handler;
 
 import hexlet.code.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
