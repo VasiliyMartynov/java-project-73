@@ -1,9 +1,10 @@
 package hexlet.code.services;
 
-import hexlet.code.dto.user.UserCreateDTO;
-import hexlet.code.dto.user.UserShowDTO;
+import hexlet.code.dto.User.UserCreateDTO;
+import hexlet.code.dto.User.UserShowDTO;
+import hexlet.code.dto.User.UserUpdateDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
-import hexlet.code.dto.user.UserMapper;
+import hexlet.code.dto.Mappers.UserMapper;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found")
         );
-        return userMapper.INSTANCE.toUserShowDTO(user);
+        return userMapper.INSTANCE.showUser(user);
     }
 
     public List<UserShowDTO> getUsers() {
@@ -38,7 +39,7 @@ public class UserService {
             List<User> users = userRepository.findAll();
             return users
                     .stream()
-                    .map(u -> userMapper.INSTANCE.toUserShowDTO(u))
+                    .map(u -> userMapper.INSTANCE.showUser(u))
                     .collect(Collectors.toList());
         } catch (NullPointerException e) {
             throw new NullPointerException("There are no any user");
@@ -51,11 +52,11 @@ public class UserService {
                     "There is an account with that email address:" + newUser.getEmail());
         }
         try {
-            var user = userMapper.INSTANCE.toUser(newUser);
+            var user = userMapper.INSTANCE.createUser(newUser);
             user.setPassword(passwordEncoder.encode(newUser.getPassword()));
             userRepository.save(user);
             userRepository.flush();
-            return userMapper.INSTANCE.toUserShowDTO(user);
+            return userMapper.INSTANCE.showUser(user);
         } catch (Exception e) {
             throw new Exception("Something where wrong");
         }
@@ -70,15 +71,12 @@ public class UserService {
         }
     }
 
-    public UserShowDTO updateUser(long id, User newUser) {
+    public UserShowDTO updateUser(long id, UserUpdateDTO dataThatShouldBeUpdated) {
         try {
-            User user = userRepository.findById(id).orElseThrow();
-            user.setEmail(newUser.getEmail());
-            user.setFirstName(newUser.getFirstName());
-            user.setLastName(newUser.getLastName());
-            user.setPassword(newUser.getPassword());
+            var user = userRepository.findById(id).orElseThrow();
+            userMapper.INSTANCE.updateUser(dataThatShouldBeUpdated, user);
             userRepository.save(user);
-            return userMapper.INSTANCE.toUserShowDTO(user);
+            return userMapper.INSTANCE.showUser(user);
         } catch (NoSuchElementException ex) {
             throw new NoSuchElementException(id + " not found");
         }

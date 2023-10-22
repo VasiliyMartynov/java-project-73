@@ -1,11 +1,12 @@
-package hexlet.code.dto.task;
+package hexlet.code.dto.Mappers;
 
+import hexlet.code.dto.Task.TaskCreateDTO;
+import hexlet.code.dto.Task.TaskShowDTO;
+import hexlet.code.dto.Task.TaskUpdateDTO;
 import hexlet.code.models.Task;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+
 
 @Mapper(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
@@ -13,6 +14,12 @@ import org.mapstruct.factory.Mappers;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface TaskMapper {
+
     TaskMapper INSTANCE = Mappers.getMapper(TaskMapper.class);
-    TaskShowDTO taskToTaskDTO(Task task);
+    TaskShowDTO showTask(Task t);
+
+
+//    Task createTask(TaskCreateDTO t);
+
+//    void updateTask(TaskUpdateDTO dto, @MappingTarget Task task);
 }

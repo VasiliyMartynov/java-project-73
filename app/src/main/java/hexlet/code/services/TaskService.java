@@ -1,9 +1,10 @@
 package hexlet.code.services;
 
-import hexlet.code.dto.task.TaskCreateDTO;
-import hexlet.code.dto.task.TaskShowDTO;
+import hexlet.code.dto.Task.TaskCreateDTO;
+import hexlet.code.dto.Task.TaskShowDTO;
+import hexlet.code.dto.Task.TaskUpdateDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
-import hexlet.code.dto.task.TaskMapper;
+import hexlet.code.dto.Mappers.TaskMapper;
 import hexlet.code.models.Label;
 import hexlet.code.models.Task;
 import hexlet.code.repository.LabelRepository;
@@ -42,7 +43,7 @@ public class TaskService {
         Task t = taskRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found")
         );
-        return convertTaskToTaskDTO(t);
+        return taskMapper.INSTANCE.showTask(t);
     }
 
     public List<TaskShowDTO> getTasks() {
@@ -50,7 +51,7 @@ public class TaskService {
             List<Task> tasks = taskRepository.findAll();
             return tasks
                     .stream()
-                    .map(t -> taskMapper.INSTANCE.taskToTaskDTO(t))
+                    .map(t -> taskMapper.INSTANCE.showTask(t))
                     .collect(Collectors.toList());
         } catch (NullPointerException e) {
             throw new NullPointerException("There are no any user");
@@ -60,33 +61,33 @@ public class TaskService {
     public TaskShowDTO createTask(TaskCreateDTO newTask) throws Exception {
         if (taskRepository.findByName(newTask.getName()).isPresent()) {
             throw new Exception(
-                    "There is task:" + newTask.getName());
+                    "There is task already:" + newTask.getName());
         }
         try {
-            Task task = Task.builder()
-                    .name(newTask.getName())
-                    .description(newTask.getDescription())
-                    .author(userRepository.findById((long) newTask.getExecutorId()).orElseThrow())
-                    .executor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow())
-                    .taskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow())
-                    .build();
-            if (!newTask.getLabelsId().isEmpty()) {
-                Set<Label> labels = newTask.getLabelsId()
-                        .stream()
-                        .map(l -> labelRepository.findById(l.longValue()).orElseThrow())
-                        .collect(Collectors.toSet());
-                task.setLabels(labels);
-            }
+            Task task = new Task();
+            task.setName(newTask.getName());
+            task.setDescription(newTask.getDescription());
+            task.setAuthor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
+            task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
+            task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
+            System.out.println("------------Create 1------------");
+            System.out.println(newTask.getLabelIds().toString());
+            task.setLabels(newTask.getLabelIds()
+                            .stream()
+                            .map(labelId -> labelRepository.findById(labelId.longValue()).orElseThrow())
+                            .collect(Collectors.toSet()));
+            System.out.println("------------Create 2------------");
+            System.out.println(task.getLabels().toString());
             taskRepository.save(task);
             taskRepository.flush();
-            return getTask(task.getId());
+            return taskMapper.INSTANCE.showTask(task);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Can't create task");
         }
     }
 
-    public TaskShowDTO updateTask(long id, TaskCreateDTO newTask) {
+    public TaskShowDTO updateTask(long id, TaskUpdateDTO newTask) {
         try {
             Task task = taskRepository.findById(id).orElseThrow();
             task.setAuthor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
@@ -94,15 +95,19 @@ public class TaskService {
             task.setDescription(newTask.getDescription());
             task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
-            if (!newTask.getLabelsId().isEmpty()) {
-                Set<Label> labels = newTask.getLabelsId()
-                        .stream()
-                        .map(l -> labelRepository.findById(l.longValue()).orElseThrow())
-                        .collect(Collectors.toSet());
-                task.setLabels(labels);
-            }
+            System.out.println("------------U1------------");
+            System.out.println(newTask.getLabelIds().toString());
+            System.out.println("------------U2------------");
+            Set<Label> newLabels = newTask.getLabelIds()
+                    .stream()
+                    .map(l -> labelRepository.findById(l.longValue()).orElseThrow())
+                    .collect(Collectors.toSet());
+            System.out.println("------------U3------------");
+            System.out.println(newTask.getLabelIds().toString());
+            System.out.println("------------U4------------");
+            task.setLabels(newLabels);
             taskRepository.save(task);
-            return convertTaskToTaskDTO(task);
+            return taskMapper.INSTANCE.showTask(task);
 
         } catch (NoSuchElementException ex) {
             throw new NoSuchElementException(id + " not found");
@@ -116,10 +121,5 @@ public class TaskService {
         } catch (NoSuchElementException ex) {
             throw new NoSuchElementException(id + " not found");
         }
-    }
-
-    //CONVERT task to taskDTO
-    public static TaskShowDTO convertTaskToTaskDTO(Task task) {
-        return TaskMapper.INSTANCE.taskToTaskDTO(task);
     }
 }

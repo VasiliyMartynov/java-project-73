@@ -1,7 +1,6 @@
 package hexlet.code.utils;
 
 import hexlet.code.models.Label;
-import hexlet.code.models.Task;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.models.User;
 import jakarta.annotation.PostConstruct;

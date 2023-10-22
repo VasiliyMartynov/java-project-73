@@ -1,7 +1,8 @@
 package hexlet.code.controllers;
 
-import hexlet.code.dto.user.UserCreateDTO;
-import hexlet.code.dto.user.UserShowDTO;
+import hexlet.code.dto.User.UserCreateDTO;
+import hexlet.code.dto.User.UserShowDTO;
+import hexlet.code.dto.User.UserUpdateDTO;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.services.UserService;
@@ -75,7 +76,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public UserShowDTO updateUser(@PathVariable long id, @RequestBody User user) {
+    public UserShowDTO updateUser(@PathVariable long id, @RequestBody UserUpdateDTO user) throws Exception {
         return userService.updateUser(id, user);
     }
 }

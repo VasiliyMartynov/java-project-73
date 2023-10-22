@@ -1,19 +1,18 @@
-package hexlet.code.dto.task;
+package hexlet.code.dto.Task;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import hexlet.code.dto.user.UserShowDTO;
+import hexlet.code.dto.User.UserShowDTO;
 import hexlet.code.models.Label;
 import hexlet.code.models.TaskStatus;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.Data;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 @Data
 public class TaskShowDTO {
 
     private Long id;
-    @NotBlank
     private String name;
     private String description;
     private TaskStatus taskStatus;

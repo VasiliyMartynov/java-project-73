@@ -1,6 +1,8 @@
 package hexlet.code.controllers;
 
-import hexlet.code.models.Label;
+import hexlet.code.dto.Label.LabelCreateDTO;
+import hexlet.code.dto.Label.LabelShowDTO;
+import hexlet.code.dto.Label.LabelUpdateDTO;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.services.LabelService;
 import jakarta.validation.Valid;
@@ -8,7 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+
 
 import java.util.List;
 
@@ -26,14 +37,14 @@ public class LabelController {
     //GET Label BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    Label getLabel(@PathVariable long id) {
+    LabelShowDTO getLabel(@PathVariable long id) {
         return labelService.getLabel(id);
     }
 
     //GET Tasks
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    List<Label> getLabels() {
+    List<LabelShowDTO> getLabels() {
         return labelService.getLabels();
     }
 
@@ -43,7 +54,7 @@ public class LabelController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    Label createLabel(@Valid @RequestBody Label label) throws Exception {
+    LabelShowDTO createLabel(@Valid @RequestBody LabelCreateDTO label) throws Exception {
         return labelService.createLabel(label);
     }
 
@@ -53,7 +64,7 @@ public class LabelController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    Label updateLabel(@PathVariable long id, @RequestBody Label label) {
+    LabelShowDTO updateLabel(@PathVariable long id, @RequestBody LabelUpdateDTO label) {
         return labelService.updateLabel(id, label);
     }
 

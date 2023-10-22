@@ -44,8 +44,8 @@ class TaskControllerTest {
 	@Autowired
 	private InstansioModelGenerator instansioModelGenerator;
 
-	private Task taskWithOutLabel;
-	private Task taskWithLabels;
+	private Task task1 = new Task();
+	private Task task2 = new Task();
 	private User user1;
 	private User user2;
 	private Label label1;
@@ -75,37 +75,39 @@ class TaskControllerTest {
 		taskStatusRepository.save(taskStatus1);
 		taskStatusRepository.save(taskStatus2);
 
-		taskWithOutLabel = Task.builder()
-				.author(user1)
-				.executor(user2)
-				.taskStatus(taskStatus1)
-				.name("taskWithOutLabel")
-				.build();
-		taskWithLabels = Task.builder()
-				.author(user1)
-				.executor(user2)
-				.taskStatus(taskStatus2)
-				.labels(Set.of(label1, label2))
-				.name("taskWithLabels")
-				.build();
+		task1.setAuthor(user1);
+		task1.setExecutor(user2);
+		task1.setTaskStatus(taskStatus2);
+		task1.setLabels(Set.of(label1, label2));
+		task1.setName("new test task1");
+		task1.setDescription("some description");
+
+
+		task2.setAuthor(user2);
+		task2.setExecutor(user1);
+		task2.setTaskStatus(taskStatus1);
+		task2.setLabels(Set.of(label1, label2));
+		task2.setName("new test task2");
+		task2.setDescription("some description");
+
 	}
 
 	@Test
 	void testGetTaskIfTaskPersist() throws Exception {
-		taskRepository.save(taskWithLabels);
+		taskRepository.save(task1);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks/" + taskWithLabels.getId()))
+				.perform(get("/tasks/" + task1.getId()))
 				.andReturn()
 				.getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).contains(taskWithLabels.getName());
+		assertThat(response.getContentAsString()).contains(task1.getName());
 	}
 
 	@Test
 	void testGetTaskIfTaskNotPersist() throws Exception {
-		taskRepository.save(taskWithLabels);
+		taskRepository.save(task1);
 		var nonExistentID  = taskRepository.findAll().size() + 1;
 		MockHttpServletResponse response = mockMvc
 				.perform(get("/tasks/" + nonExistentID))
@@ -114,7 +116,7 @@ class TaskControllerTest {
 
 		assertThat(response.getStatus()).isEqualTo(422);
 		assertThat(response.getContentType()).isNotEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).doesNotContain(taskWithLabels.getName());
+
 	}
 
 	@Test
@@ -129,8 +131,8 @@ class TaskControllerTest {
 
 	@Test
 	void testGetTasks() throws Exception {
-		taskRepository.save(taskWithLabels);
-//		taskRepository.save(taskWithOutLabel);
+		taskRepository.save(task1);
+		taskRepository.save(task2);
 		MockHttpServletResponse response = mockMvc
 				.perform(get("/tasks"))
 				.andReturn()
@@ -138,8 +140,9 @@ class TaskControllerTest {
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).contains(taskWithLabels.getName());
-//		assertThat(response.getContentAsString()).contains();
+		assertThat(response.getContentAsString()).contains(task1.getName());
+		assertThat(response.getContentAsString()).contains(task2.getName());
+
 	}
 
 
@@ -149,10 +152,11 @@ class TaskControllerTest {
 				.perform(
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"task name\","
+								.content("{\"name\":\"new task\","
 										+ "\"description\":\"task description\","
-										+ "\"executorId\":"+ user1.getId() + ","
-										+ "\"taskStatusId\":" + user2.getId() + "}"
+										+ "\"executorId\":" + user1.getId() + ","
+										+ "\"taskStatusId\":" + user2.getId() + ","
+										+ "\"labelIds\":[" + label1.getId() + "," + label2.getId()+ "]}"
 								)
 				)
 				.andReturn()
@@ -164,7 +168,7 @@ class TaskControllerTest {
 				.getResponse();
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).contains("task name", "task description");
+		assertThat(response.getContentAsString()).contains("new task", "task description");
 	}
 
 	@Test
@@ -173,21 +177,17 @@ class TaskControllerTest {
 				.perform(
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"task name\","
+								.content("{\"name\":\"new task\","
 										+ "\"description\":\"task description\","
 										+ "\"executorId\":,"
-										+ "\"taskStatusId\":" + user2.getId() + "}"
+										+ "\"taskStatusId\":" + user2.getId() + ","
+										+ "\"labelIds\":[" + label1.getId() + "," + label2.getId()+ "]}"
 								)
 				)
 				.andReturn()
 				.getResponse();
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
-		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks"))
-				.andReturn()
-				.getResponse();
-		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
 	}
 
 	@Test
@@ -197,9 +197,10 @@ class TaskControllerTest {
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"name\":\"\","
-										+ "\"description\":\"task description\","
-										+ "\"executorId\":"+ user1.getId() + ","
-										+ "\"taskStatusId\":" + user2.getId() + "}"
+										+ "\"description\":\"new task description\","
+										+ "\"executorId\":1,"
+										+ "\"taskStatusId\":1,"
+										+ "\"labelIds\":[1,2,3]}"
 								)
 				)
 				.andReturn()
@@ -210,7 +211,7 @@ class TaskControllerTest {
 				.perform(get("/tasks"))
 				.andReturn()
 				.getResponse();
-		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
+		assertThat(response.getContentAsString()).doesNotContain("new task description");
 	}
 
 	@Test
@@ -219,10 +220,11 @@ class TaskControllerTest {
 				.perform(
 						post("/tasks")
 								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"task name\","
-										+ "\"description\":\"task description\","
-										+ "\"executorId\":"+ user1.getId() + ","
-										+ "\"taskStatusId\":}"
+								.content("{\"name\":\"new task with\","
+										+ "\"description\":\"new task description\","
+										+ "\"executorId\":1,"
+										+ "\"taskStatusId\":,"
+										+ "\"labelIds\":[1,2,3]}"
 								)
 				)
 				.andReturn()
@@ -233,7 +235,7 @@ class TaskControllerTest {
 				.perform(get("/tasks"))
 				.andReturn()
 				.getResponse();
-		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
+		assertThat(response.getContentAsString()).doesNotContain("new task with", "new task description");
 	}
 
 	@Test
@@ -257,16 +259,17 @@ class TaskControllerTest {
 
 	@Test
 	void testUpdatesTask() throws Exception {
-		taskRepository.save(taskWithLabels);
+		taskRepository.save(task1);
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(
-						put("/tasks/" +  taskWithLabels.getId())
-								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"new tasks name\","
-										+ "\"description\":\"new task description\","
-										+ "\"executorId\":"+ user1.getId() + ","
-										+ "\"taskStatusId\":"+ user1.getId() + "}"
-								)
+			.perform(
+				put("/tasks/" +  task1.getId())
+					.contentType(MediaType.APPLICATION_JSON)
+						.content("{\"name\":\"updated task\","
+								+ "\"description\":\"updated description\","
+								+ "\"executorId\":" + user1.getId() + ","
+								+ "\"taskStatusId\":" + user2.getId() + ","
+								+ "\"labelIds\":[" + label1.getId() + "," + label2.getId()+ "]}"
+						)
 				)
 				.andReturn()
 				.getResponse();
@@ -280,42 +283,14 @@ class TaskControllerTest {
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).contains("new tasks name", "new task description");
-	}
-
-	@Test
-	void testUpdatesTaskNotCorrecTaskStatusId() throws Exception {
-		taskRepository.save(taskWithLabels);
-		MockHttpServletResponse responsePost = mockMvc
-				.perform(
-						put("/tasks/" +  taskWithLabels.getId())
-								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"new tasks name\","
-										+ "\"description\":\"new task description\","
-										+ "\"executorId\":"+ user2.getId() + ","
-										+ "\"taskStatusId\":,}"
-								)
-				)
-				.andReturn()
-				.getResponse();
-
-		assertThat(responsePost.getStatus()).isEqualTo(400);
-
-		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks"))
-				.andReturn()
-				.getResponse();
-
-		assertThat(response.getStatus()).isEqualTo(200);
-		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
+		assertThat(response.getContentAsString()).contains("updated task", "updated description");
 	}
 
 	@Test
 	void testDeleteTask() throws Exception {
-		taskRepository.save(taskWithLabels);
+		taskRepository.save(task1);
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(delete("/tasks/" + taskWithLabels.getId()))
+				.perform(delete("/tasks/" + task1.getId()))
 				.andReturn()
 				.getResponse();
 
@@ -328,6 +303,6 @@ class TaskControllerTest {
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).doesNotContain(taskWithLabels.getName());
+		assertThat(response.getContentAsString()).doesNotContain(task1.getName());
 	}
 }

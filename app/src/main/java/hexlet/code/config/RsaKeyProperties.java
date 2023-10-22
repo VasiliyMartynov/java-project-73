@@ -1,4 +1,4 @@
-package hexlet.code.component;
+package hexlet.code.config;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;

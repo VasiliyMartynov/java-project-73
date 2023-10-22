@@ -1,13 +1,16 @@
-package hexlet.code.dto.task;
+package hexlet.code.dto.Task;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
-
 public class TaskCreateDTO {
 
     @NotEmpty
@@ -16,10 +19,11 @@ public class TaskCreateDTO {
 
     private String description;
 
+    @NotNull
     private int executorId;
 
+    @NotNull
     private int taskStatusId;
 
-    private Set<Integer> labelsId = new HashSet<>();
-
+    private Set<Integer> labelIds = new HashSet<>();
 }

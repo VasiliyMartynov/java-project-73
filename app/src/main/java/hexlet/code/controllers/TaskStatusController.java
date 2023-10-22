@@ -1,6 +1,8 @@
 package hexlet.code.controllers;
 
-import hexlet.code.models.TaskStatus;
+import hexlet.code.dto.TaskStatus.TaskStatusCreateDTO;
+import hexlet.code.dto.TaskStatus.TaskStatusShowDTO;
+import hexlet.code.dto.TaskStatus.TaskStatusUpdateDTO;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.services.TaskStatusService;
 import jakarta.validation.Valid;
@@ -8,7 +10,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -26,14 +36,14 @@ public class TaskStatusController {
     //GET Task Status BY ID
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    TaskStatus getTaskStatus(@PathVariable long id) {
+    TaskStatusShowDTO getTaskStatus(@PathVariable long id) {
         return taskStatusService.getTaskStatus(id);
     }
 
     //GET Task Statuses
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    List<TaskStatus> getTaskStatuses() {
+    List<TaskStatusShowDTO> getTaskStatuses() {
         return taskStatusService.getTaskStatuses();
     }
 
@@ -43,7 +53,7 @@ public class TaskStatusController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    TaskStatus createTaskStatus(@Valid @RequestBody TaskStatus task) throws Exception {
+    TaskStatusShowDTO createTaskStatus(@Valid @RequestBody TaskStatusCreateDTO task) throws Exception {
         return taskStatusService.createTaskStatus(task);
     }
 
@@ -53,7 +63,7 @@ public class TaskStatusController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    TaskStatus updateTaskStatus(@PathVariable long id, @RequestBody TaskStatus task) {
+    TaskStatusShowDTO updateTaskStatus(@PathVariable long id, @RequestBody TaskStatusUpdateDTO task) {
         return taskStatusService.updateTaskStatus(id, task);
     }
 

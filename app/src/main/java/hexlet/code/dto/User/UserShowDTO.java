@@ -1,4 +1,4 @@
-package hexlet.code.dto.user;
+package hexlet.code.dto.User;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
 import java.sql.Timestamp;
 
 @Data
-public class UserUpdateDTO {
+public class UserShowDTO {
+    private Long id;
 
     @Email
     private String email;

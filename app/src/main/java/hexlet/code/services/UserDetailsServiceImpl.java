@@ -1,6 +1,5 @@
 package hexlet.code.services;
 
-
 import hexlet.code.config.SecurityConfig;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
@@ -16,7 +15,6 @@ public class UserDetailsServiceImpl implements UserDetailsManager {
 
     @Autowired
     private UserRepository userRepository;
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
