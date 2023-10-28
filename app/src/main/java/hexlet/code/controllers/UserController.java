@@ -7,10 +7,7 @@ import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.services.UserService;
 import jakarta.validation.Valid;
-//import lombok.AllArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,11 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
-
 import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("${base-url}" + USER_CONTROLLER_PATH)
 public class UserController {
 
@@ -37,9 +33,7 @@ public class UserController {
     private static final String ONLY_OWNER_BY_ID = """
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
         """;
-    @Autowired
     private final UserService userService;
-    @Autowired
     private final UserRepository userRepository;
 
 

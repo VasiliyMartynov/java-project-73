@@ -2,23 +2,19 @@ package hexlet.code.services;
 
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-
 import static hexlet.code.config.SecurityConfig.DEFAULT_AUTHORITIES;
 
 @Service
+@AllArgsConstructor
 public class UserDetailsService implements UserDetailsManager {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {

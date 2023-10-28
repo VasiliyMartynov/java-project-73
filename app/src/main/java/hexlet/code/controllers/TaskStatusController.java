@@ -6,8 +6,7 @@ import hexlet.code.dto.TaskStatus.TaskStatusUpdateDTO;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.services.TaskStatusService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,23 +18,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
 import java.util.List;
-
 import static hexlet.code.controllers.TaskStatusController.STATUSES_CONTROLLER_PATH;
 
 @RestController
 @RequestMapping("${base-url}" + STATUSES_CONTROLLER_PATH)
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TaskStatusController {
     public static final String ID = "/{id}";
-
     public static final String STATUSES_CONTROLLER_PATH = "/statuses";
-
-    @Autowired
     private TaskStatusService taskStatusService;
-
-    @Autowired
     private TaskStatusRepository taskStatusRepository;
 
     //GET Task Status BY ID

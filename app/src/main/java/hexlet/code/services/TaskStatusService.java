@@ -7,8 +7,7 @@ import hexlet.code.dto.TaskStatus.TaskStatusUpdateDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,13 +15,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TaskStatusService {
 
-    @Autowired
     private TaskStatusRepository taskStatusRepository;
-
-    @Autowired
     private TaskStatusMapper taskStatusMapper;
 
     public TaskStatusShowDTO getTaskStatus(long id) {

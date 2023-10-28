@@ -1,7 +1,7 @@
 package hexlet.code.config;
 
 import hexlet.code.services.UserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,21 +23,16 @@ import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import java.util.List;
 
-
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 @EnableGlobalMethodSecurity(
         prePostEnabled = true)
 public class SecurityConfig {
 
     public static final List<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
-    @Autowired
     private JwtDecoder jwtDecoder;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private UserDetailsService userService;
 
     @Bean

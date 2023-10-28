@@ -6,8 +6,7 @@ import hexlet.code.dto.Label.LabelUpdateDTO;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.services.LabelService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,23 +18,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
-
 import java.util.List;
-
 import static hexlet.code.controllers.LabelController.LABEL_CONTROLLER_PATH;
 
 @RestController
 @RequestMapping("${base-url}" + LABEL_CONTROLLER_PATH)
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class LabelController {
 
     public static final String ID = "/{id}";
     public static final String LABEL_CONTROLLER_PATH = "/labels";
-    @Autowired
     private LabelService labelService;
-
-    @Autowired
     private LabelRepository labelRepository;
 
     //GET Label BY ID

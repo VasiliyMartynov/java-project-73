@@ -7,8 +7,7 @@ import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.dto.Mappers.UserMapper;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,14 +17,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserService {
-
-    @Autowired
     private static UserMapper userMapper;
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public UserShowDTO getUser(long id) {

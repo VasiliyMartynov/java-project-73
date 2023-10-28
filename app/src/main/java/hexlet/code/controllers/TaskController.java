@@ -6,8 +6,7 @@ import hexlet.code.dto.Task.TaskUpdateDTO;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.services.TaskService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,20 +18,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("${base-url}" + TaskController.TASK_CONTROLLER_PATH)
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TaskController {
     public static final String ID = "/{id}";
     public static final String TASK_CONTROLLER_PATH = "/tasks";
-
-    @Autowired
     private TaskService taskService;
-
-    @Autowired
     private TaskRepository taskRepository;
 
     //GET Task BY ID

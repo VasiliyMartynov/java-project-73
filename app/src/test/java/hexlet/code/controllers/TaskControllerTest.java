@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
@@ -55,6 +56,8 @@ class TaskControllerTest {
 	private Label label2;
 	private TaskStatus taskStatus1;
 	private TaskStatus taskStatus2;
+
+	private final static String BASEURL = "/api/tasks";
 
 	@BeforeEach
 	public void setup() {
@@ -96,10 +99,11 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetTaskIfTaskPersist() throws Exception {
 		taskRepository.save(task1);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks/" + task1.getId()))
+				.perform(get(BASEURL + "/" + task1.getId()))
 				.andReturn()
 				.getResponse();
 
@@ -109,11 +113,12 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetTaskIfTaskNotPersist() throws Exception {
 		taskRepository.save(task1);
 		var nonExistentID  = taskRepository.findAll().size() + 1;
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks/" + nonExistentID))
+				.perform(get(BASEURL + "/" + nonExistentID))
 				.andReturn()
 				.getResponse();
 
@@ -123,9 +128,10 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetTaskIfTaskNotPersistAndRequestIsNotCorrect() throws Exception {
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks/a"))
+				.perform(get(BASEURL + "/" + "a"))
 				.andReturn()
 				.getResponse();
 
@@ -133,11 +139,12 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetTasks() throws Exception {
 		taskRepository.save(task1);
 		taskRepository.save(task2);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 
@@ -150,10 +157,11 @@ class TaskControllerTest {
 
 
 	@Test
+	@WithMockUser
 	void testCreateTask() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 			.perform(
-				post("/tasks")
+				post(BASEURL)
 					.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"name\":\"new task\","
 								+ "\"description\":\"task description\","
@@ -166,7 +174,7 @@ class TaskControllerTest {
 				.getResponse();
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getStatus()).isEqualTo(200);
@@ -175,10 +183,11 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateTaskNoExecutorId() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 			.perform(
-				post("/tasks")
+				post(BASEURL)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("{\"name\":\"new task\","
 							+ "\"description\":\"task description\","
@@ -195,10 +204,11 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateEmptyName() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 			.perform(
-				post("/tasks")
+				post(BASEURL)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("{\"name\":\"\","
 							+ "\"description\":\"new task description\","
@@ -218,10 +228,11 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateTaskNoStatus() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 			.perform(
-				post("/tasks")
+				post(BASEURL)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"name\":\"new task with\","
 						+ "\"description\":\"new task description\","
@@ -235,17 +246,18 @@ class TaskControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("new task with", "new task description");
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateTaskNoJson() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/tasks")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("")
 				)
@@ -261,11 +273,12 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testUpdatesTask() throws Exception {
 		taskRepository.save(task1);
 		MockHttpServletResponse responsePost = mockMvc
 			.perform(
-				put("/tasks/" +  task1.getId())
+				put(BASEURL + "/" + task1.getId())
 					.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"name\":\"updated task\","
 								+ "\"description\":\"updated description\","
@@ -281,7 +294,7 @@ class TaskControllerTest {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 
@@ -291,17 +304,18 @@ class TaskControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testDeleteTask() throws Exception {
 		taskRepository.save(task1);
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(delete("/tasks/" + task1.getId()))
+				.perform(delete(BASEURL + "/" + task1.getId()))
 				.andReturn()
 				.getResponse();
 
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/tasks"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 

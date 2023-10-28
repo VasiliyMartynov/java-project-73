@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,26 +27,24 @@ class TaskStatusControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-
 	@Autowired
 	private TaskStatusRepository taskStatusRepository;
-
 	@Autowired
 	private InstansioModelGenerator instansioModelGenerator;
-
 	private TaskStatus taskStatus;
-
 	@BeforeEach
 	public void setUp() {
 		taskStatus = Instancio.of(instansioModelGenerator.getTaskStatusModel())
 				.create();
 	}
+	private final static String BASEURL = "/api/statuses";
 
 	@Test
+	@WithMockUser
 	void testGetStatusIfStatusPersist() throws Exception {
 		taskStatusRepository.save(taskStatus);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/statuses/" + taskStatus.getId()))
+				.perform(get(BASEURL + "/" + taskStatus.getId()))
 				.andReturn()
 				.getResponse();
 
@@ -55,10 +54,11 @@ class TaskStatusControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetStatusIfStatusNotPersist() throws Exception {
 		var nonExistentID  = taskStatusRepository.findAll().size() + 1;
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/statuses/" + nonExistentID))
+				.perform(get(BASEURL + "/" + nonExistentID))
 				.andReturn()
 				.getResponse();
 
@@ -66,9 +66,10 @@ class TaskStatusControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetStatusIfStatusNotPersistAndRequestIsNotCorrect() throws Exception {
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/statuses/a"))
+				.perform(get(BASEURL + "/" + "a"))
 				.andReturn()
 				.getResponse();
 
@@ -77,13 +78,14 @@ class TaskStatusControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetStatuses() throws Exception {
 		taskStatusRepository.save(taskStatus);
 		var taskStatus2 = Instancio.of(instansioModelGenerator.getTaskStatusModel())
 				.create();
 		taskStatusRepository.save(taskStatus2);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/statuses"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 
@@ -95,10 +97,11 @@ class TaskStatusControllerTest {
 
 
 	@Test
+	@WithMockUser
 	void testCreateStatus() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/statuses")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"name\":\"test status\"}"
 								)
@@ -107,7 +110,7 @@ class TaskStatusControllerTest {
 				.getResponse();
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/statuses"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getStatus()).isEqualTo(200);
@@ -116,10 +119,11 @@ class TaskStatusControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateStatusWithNull() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/statuses")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"name\":null}"
 								)
@@ -130,11 +134,12 @@ class TaskStatusControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testUpdatesStatus() throws Exception {
 		taskStatusRepository.save(taskStatus);
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						put("/statuses/" + taskStatus.getId())
+						put(BASEURL + "/" + taskStatus.getId())
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"name\":\"updated status\"}"
 								)
@@ -145,7 +150,7 @@ class TaskStatusControllerTest {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/statuses/" + taskStatus.getId()))
+				.perform(get(BASEURL + "/" + taskStatus.getId()))
 				.andReturn()
 				.getResponse();
 
@@ -155,17 +160,18 @@ class TaskStatusControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testDeletePerson() throws Exception {
 		taskStatusRepository.save(taskStatus);
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(delete("/statuses/" + taskStatus.getId()))
+				.perform(delete(BASEURL + "/" + taskStatus.getId()))
 				.andReturn()
 				.getResponse();
 
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/statuses"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 

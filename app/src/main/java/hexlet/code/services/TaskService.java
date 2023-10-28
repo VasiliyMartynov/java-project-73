@@ -11,8 +11,7 @@ import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -22,28 +21,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TaskService {
     private static final String ONLY_OWNER_BY_ID = """
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
         """;
-
-    @Autowired
     private static TaskMapper taskMapper;
-
-    @Autowired
     private TaskRepository taskRepository;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private LabelRepository labelRepository;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private TaskStatusRepository taskStatusRepository;
 
     public TaskShowDTO getTask(long id) {

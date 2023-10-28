@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.http.MediaType;
@@ -26,26 +27,32 @@ class UserControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-
 	@Autowired
 	private InstansioModelGenerator instansioModelGenerator;
-
 	@Autowired
 	private UserRepository userRepository;
-
 	private User user;
+	private User testUser = new User();
+	private final static String BASEURL = "/api/users";
 
 	@BeforeEach
 	public void setUp() {
 		user = Instancio.of(instansioModelGenerator.getUserModel())
 				.create();
+		testUser.setEmail("test@test.com");
+		testUser.setPassword("1234");
+		testUser.setFirstName("test");
+		testUser.setLastName("test_");
+		userRepository.save(testUser);
+
 	}
 
 	@Test
+	@WithMockUser
 	void testGetUserIfUserPersist() throws Exception {
 		userRepository.save(user);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/" + user.getId()))
+				.perform(get(BASEURL + "/" + user.getId()))
 				.andReturn()
 				.getResponse();
 
@@ -55,10 +62,11 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetUserIfUserNotPersist() throws Exception {
 		var nonExistentID  = userRepository.findAll().size() + 1;
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/" + nonExistentID))
+				.perform(get(BASEURL + "/" + nonExistentID))
 				.andReturn()
 				.getResponse();
 
@@ -66,10 +74,11 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetUserIfUserNotPersistAndRequestIsNotCorrect() throws Exception {
 		userRepository.save(user);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users/a"))
+				.perform(get(BASEURL + "/a"))
 				.andReturn()
 				.getResponse();
 
@@ -79,13 +88,14 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testGetUsers() throws Exception {
 		userRepository.save(user);
 		var user2 = Instancio.of(instansioModelGenerator.getUserModel())
 				.create();
 		userRepository.save(user2);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 
@@ -97,10 +107,11 @@ class UserControllerTest {
 
 
 	@Test
+	@WithMockUser
 	void testCreateUser() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@testEmail.com\","
 										+ "\"firstName\":\"Biba\","
@@ -112,7 +123,7 @@ class UserControllerTest {
 				.getResponse();
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getStatus()).isEqualTo(200);
@@ -121,10 +132,11 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateUserNotCorrectEmail() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"Biba\""
@@ -137,17 +149,18 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateUserNoName() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\""
@@ -160,17 +173,18 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateUserNoLastName() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\"Biba"
@@ -183,17 +197,18 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
 	}
 
 	@Test
+	@WithMockUser
 	void testCreateUserNoPassword() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						post("/users")
+						post(BASEURL)
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\"Biba"
@@ -206,18 +221,39 @@ class UserControllerTest {
 
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 		assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
 	}
 
 	@Test
-	void testUpdatesUser() throws Exception {
+	@WithMockUser
+	void testUpdatesAnotherUser() throws Exception {
 		userRepository.save(user);
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						put("/users/" + user.getId())
+						put(BASEURL + "/" + user.getId())
+								.contentType(MediaType.APPLICATION_JSON)
+								.content("{\"email\":\"testEmail@testEmail.com\""
+										+ ",\"firstName\":\"Biba\""
+										+ ",\"lastName\":\"Boba\""
+										+ ",\"password\":\"somepass\"}"
+								)
+				)
+				.andReturn()
+				.getResponse();
+
+		assertThat(responsePost.getStatus()).isEqualTo(422);
+	}
+
+	@Test
+	@WithMockUser("test@test.com")
+	void testUpdateSelf() throws Exception {
+//		userRepository.save(user);
+		MockHttpServletResponse responsePost = mockMvc
+				.perform(
+						put(BASEURL + "/" + testUser.getId())
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@testEmail.com\""
 										+ ",\"firstName\":\"Biba\""
@@ -231,7 +267,7 @@ class UserControllerTest {
 		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 
@@ -241,11 +277,12 @@ class UserControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	void testUpdatesUserNotCorrecEmail() throws Exception {
 		userRepository.save(user);
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(
-						put("/users/" + user.getId())
+						put(BASEURL + "/" + user.getId())
 								.contentType(MediaType.APPLICATION_JSON)
 								.content("{\"email\":\"testEmail@\""
 										+ ",\"firstName\":\"\"Biba"
@@ -259,7 +296,7 @@ class UserControllerTest {
 		assertThat(responsePost.getStatus()).isEqualTo(400);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 
@@ -269,22 +306,23 @@ class UserControllerTest {
 	}
 
 	@Test
-	void testDeletePerson() throws Exception {
+	@WithMockUser
+	void testDeleteAnotherPerson() throws Exception {
 		userRepository.save(user);
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(delete("/users/" + user.getId()))
+				.perform(delete(BASEURL+ "/" + user.getId()))
 				.andReturn()
 				.getResponse();
 
-		assertThat(responsePost.getStatus()).isEqualTo(200);
+		assertThat(responsePost.getStatus()).isEqualTo(422);
 
 		MockHttpServletResponse response = mockMvc
-				.perform(get("/users"))
+				.perform(get(BASEURL))
 				.andReturn()
 				.getResponse();
 
 		assertThat(response.getStatus()).isEqualTo(200);
 		assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-		assertThat(response.getContentAsString()).doesNotContain(user.getFirstName(), user.getLastName());
+		assertThat(response.getContentAsString()).contains(user.getFirstName(), user.getLastName());
 	}
 }
