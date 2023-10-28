@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+
 public class AuthenticationController {
     @Autowired
     private JWTUtils jwtUtils;
@@ -18,7 +19,7 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/api/login")
+    @PostMapping("${base-url}" + "/login")
     public String create(@RequestBody AuthRequest authRequest) {
         var authentication = new UsernamePasswordAuthenticationToken(
                 authRequest.email(), authRequest.password());

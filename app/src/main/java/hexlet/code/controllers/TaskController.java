@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("${base-url}" + TaskController.TASK_CONTROLLER_PATH)
 @RequiredArgsConstructor
 public class TaskController {
+    public static final String ID = "/{id}";
+    public static final String TASK_CONTROLLER_PATH = "/tasks";
 
     @Autowired
     private TaskService taskService;
@@ -34,7 +36,7 @@ public class TaskController {
     private TaskRepository taskRepository;
 
     //GET Task BY ID
-    @GetMapping(path = "/{id}")
+    @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     TaskShowDTO getTask(@PathVariable long id) {
         return taskService.getTask(id);
@@ -68,7 +70,7 @@ public class TaskController {
     }
 
     //DELETE TASK BY ID
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     void deleteTask(@PathVariable long id) {
         taskService.deleteTask(id);

@@ -27,7 +27,7 @@ logging:
   level:
     org:
       springframework:
-        web: DEBUG
-        security: DEBUG
-    guru.springframework.controllers: DEBUG
-    org.hibernate: DEBUG
+        web: INFO
+        security: INFO
+    guru.springframework.controllers: INFO
+    org.hibernate: INFO

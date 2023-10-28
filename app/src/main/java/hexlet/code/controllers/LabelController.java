@@ -23,11 +23,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
+import static hexlet.code.controllers.LabelController.LABEL_CONTROLLER_PATH;
+
 @RestController
-@RequestMapping("/labels")
+@RequestMapping("${base-url}" + LABEL_CONTROLLER_PATH)
 @RequiredArgsConstructor
 public class LabelController {
 
+    public static final String ID = "/{id}";
+    public static final String LABEL_CONTROLLER_PATH = "/labels";
     @Autowired
     private LabelService labelService;
 
@@ -35,7 +39,7 @@ public class LabelController {
     private LabelRepository labelRepository;
 
     //GET Label BY ID
-    @GetMapping(path = "/{id}")
+    @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     LabelShowDTO getLabel(@PathVariable long id) {
         return labelService.getLabel(id);
@@ -69,7 +73,7 @@ public class LabelController {
     }
 
     //DELETE Label BY ID
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     void deleteLabel(@PathVariable long id) {
         labelService.deleteLabel(id);

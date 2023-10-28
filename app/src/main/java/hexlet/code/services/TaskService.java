@@ -13,6 +13,7 @@ import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,6 +24,9 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class TaskService {
+    private static final String ONLY_OWNER_BY_ID = """
+            @userRepository.findById(#id).get().getEmail() == authentication.getName()
+        """;
 
     @Autowired
     private static TaskMapper taskMapper;
@@ -35,6 +39,9 @@ public class TaskService {
 
     @Autowired
     private LabelRepository labelRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private TaskStatusRepository taskStatusRepository;
@@ -67,7 +74,7 @@ public class TaskService {
             Task task = new Task();
             task.setName(newTask.getName());
             task.setDescription(newTask.getDescription());
-            task.setAuthor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
+            task.setAuthor(userService.getCurrentUser());
             task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
             System.out.println("------------Create 1------------");
@@ -93,7 +100,7 @@ public class TaskService {
             task.setAuthor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
             task.setName(newTask.getName());
             task.setDescription(newTask.getDescription());
-            task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
+            task.setExecutor(userService.getCurrentUser());
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
             System.out.println("------------U1------------");
             System.out.println(newTask.getLabelIds().toString());
@@ -114,6 +121,7 @@ public class TaskService {
         }
     }
 
+    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteTask(long id) {
         try {
             Optional<Task> task = taskRepository.findById(id);

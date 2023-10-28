@@ -8,9 +8,12 @@ import hexlet.code.repository.UserRepository;
 import hexlet.code.services.UserService;
 import jakarta.validation.Valid;
 //import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,21 +28,18 @@ import java.util.List;
 import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
 
 @RestController
-//@RequestMapping("/users")
 @RequiredArgsConstructor
-//@AllArgsConstructor
-//@RestController
 @RequestMapping("${base-url}" + USER_CONTROLLER_PATH)
 public class UserController {
 
     public static final String USER_CONTROLLER_PATH = "/users";
     public static final String ID = "/{id}";
-
     private static final String ONLY_OWNER_BY_ID = """
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
         """;
-
+    @Autowired
     private final UserService userService;
+    @Autowired
     private final UserRepository userRepository;
 
 
@@ -76,6 +76,7 @@ public class UserController {
     //DELETE USER BY ID
     @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
     }
@@ -86,6 +87,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(ONLY_OWNER_BY_ID)
     public UserShowDTO updateUser(@PathVariable long id, @RequestBody UserUpdateDTO user) throws Exception {
         return userService.updateUser(id, user);
     }
