@@ -8,8 +8,11 @@ build:
 	./gradlew clean build
 
 start:
-	./gradlew bootRun --args='--spring.profiles.active=dev'
 	make -C frontend start
+	./gradlew bootRun --args='--spring.profiles.active=dev'
+
+start_back:
+	./gradlew bootRun --args='--spring.profiles.active=dev'
 
 start-prod:
 	./gradlew bootRun --args='--spring.profiles.active=prod'

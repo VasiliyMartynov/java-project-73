@@ -1,23 +1,24 @@
 package hexlet.code.services;
 
-//import hexlet.code.config.SecurityConfig;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-//import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import static hexlet.code.config.SecurityConfig.DEFAULT_AUTHORITIES;
 
 @Service
-@RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsManager {
+public class UserDetailsService implements UserDetailsManager {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
@@ -35,27 +36,35 @@ public class UserDetailsServiceImpl implements UserDetailsManager {
     }
 
     @Override
-    public void createUser(UserDetails user) {
-
+    public void createUser(UserDetails userData) {
+//        var user = new User();
+//        user.setEmail(userData.getUsername());
+//        var hashedPassword = passwordEncoder.encode(userData.getPassword());
+//        user.setPasswordDigest(hashedPassword);
+//        userRepository.save(user);
     }
 
     @Override
     public void updateUser(UserDetails user) {
-
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
     }
 
     @Override
     public void deleteUser(String username) {
-
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
     }
 
     @Override
     public void changePassword(String oldPassword, String newPassword) {
-
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'changePassword'");
     }
 
     @Override
     public boolean userExists(String username) {
-        return false;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'userExists'");
     }
 }
