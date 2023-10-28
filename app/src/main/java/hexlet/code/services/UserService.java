@@ -9,7 +9,7 @@ import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,7 +25,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-//    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     public UserShowDTO getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(
@@ -53,8 +53,8 @@ public class UserService {
         }
         try {
             var user = userMapper.INSTANCE.createUser(newUser);
-//            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-            user.setPassword(newUser.getPassword());
+            user.setPassword(passwordEncoder.encode(newUser.getPassword()));
+//            user.setPassword(newUser.getPassword());
             userRepository.save(user);
             userRepository.flush();
             return userMapper.INSTANCE.showUser(user);
