@@ -6,10 +6,12 @@ plugins {
 	id 'com.adarshr.test-logger' version '2.1.1'
 	id 'org.liquibase.gradle' version '2.2.0'
 	id("io.freefair.lombok") version "8.4"
-	id("org.springframework.boot") version "3.1.4"
-	id("io.spring.dependency-management") version "1.1.3"
+//	id("org.springframework.boot") version "3.1.4"
+//	id("io.spring.dependency-management") version "1.1.3"
 	id("com.github.ben-manes.versions") version "0.49.0"
 	id("org.siouan.frontend-jdk11") version "6.0.0"
+	id 'org.springframework.boot' version '3.0.6'
+	id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'hexlet.code'
@@ -30,11 +32,12 @@ dependencies {
 			'org.springframework.boot:spring-boot-starter-validation',
 			'org.springframework.boot:spring-boot-devtools',
 			'org.springframework.boot:spring-boot-starter-actuator',
-			'org.projectlombok:lombok',
 			'org.springframework.boot:spring-boot-configuration-processor',
 			'org.springframework.boot:spring-boot-starter-security',
-			'org.springframework.boot:spring-boot-starter-oauth2-resource-server',
 			'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0',
+			'org.springframework.boot:spring-boot-starter-oauth2-resource-server',
+			'org.projectlombok:lombok',
+			'io.jsonwebtoken:jjwt:0.9.1',
 			'org.openapitools:jackson-databind-nullable:0.2.6',
 			'com.querydsl:querydsl-jpa:5.0.0:jakarta',
 			'info.picocli:picocli:4.7.5',
@@ -128,6 +131,9 @@ liquibase {
 	}
 }
 
+// Сборка фронтенда.
+// Выполняется только если ничего не изменилось.
+// *****************************************************************************
 frontend {
 	nodeVersion = '16.13.1'
 	installScript = 'install'
@@ -156,7 +162,8 @@ installFrontend {
 }
 
 processResources.dependsOn assembleFrontend
+// *****************************************************************************
 
-task stage {
-	dependsOn installDist
-}
+// Таска нужная heroku для деплоя
+task stage(dependsOn: [clean, installDist])
+installDist.mustRunAfter clean

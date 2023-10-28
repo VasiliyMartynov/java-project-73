@@ -7,8 +7,8 @@ import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.services.UserService;
 import jakarta.validation.Valid;
+//import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,19 +22,29 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
 
+import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
+
 @RestController
-@RequestMapping("/users")
+//@RequestMapping("/users")
 @RequiredArgsConstructor
+//@AllArgsConstructor
+//@RestController
+@RequestMapping("${base-url}" + USER_CONTROLLER_PATH)
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    public static final String USER_CONTROLLER_PATH = "/users";
+    public static final String ID = "/{id}";
 
-    @Autowired
-    private UserRepository userRepository;
+    private static final String ONLY_OWNER_BY_ID = """
+            @userRepository.findById(#id).get().getEmail() == authentication.getName()
+        """;
+
+    private final UserService userService;
+    private final UserRepository userRepository;
+
 
     //GET userDTO BY ID
-    @GetMapping(path = "/{id}")
+    @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     UserShowDTO getUser(@PathVariable long id) {
         return userService.getUser(id);
@@ -64,7 +74,7 @@ public class UserController {
     }
 
     //DELETE USER BY ID
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     public void deleteUser(@PathVariable long id) {
         userService.deleteUser(id);

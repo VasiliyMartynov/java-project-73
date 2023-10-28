@@ -1,10 +1,11 @@
 package hexlet.code.dto.Mappers;
 
-import hexlet.code.dto.Task.TaskCreateDTO;
 import hexlet.code.dto.Task.TaskShowDTO;
-import hexlet.code.dto.Task.TaskUpdateDTO;
 import hexlet.code.models.Task;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 

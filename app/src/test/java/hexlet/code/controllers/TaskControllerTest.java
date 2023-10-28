@@ -21,7 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -149,15 +152,15 @@ class TaskControllerTest {
 	@Test
 	void testCreateTask() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(
-						post("/tasks")
-								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"new task\","
-										+ "\"description\":\"task description\","
-										+ "\"executorId\":" + user1.getId() + ","
-										+ "\"taskStatusId\":" + user2.getId() + ","
-										+ "\"labelIds\":[" + label1.getId() + "," + label2.getId()+ "]}"
-								)
+			.perform(
+				post("/tasks")
+					.contentType(MediaType.APPLICATION_JSON)
+						.content("{\"name\":\"new task\","
+								+ "\"description\":\"task description\","
+								+ "\"executorId\":" + user1.getId() + ","
+								+ "\"taskStatusId\":" + user2.getId() + ","
+								+ "\"labelIds\":[" + label1.getId()
+								+ "," + label2.getId() + "]}")
 				)
 				.andReturn()
 				.getResponse();
@@ -174,15 +177,16 @@ class TaskControllerTest {
 	@Test
 	void testCreateTaskNoExecutorId() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(
-						post("/tasks")
-								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"new task\","
-										+ "\"description\":\"task description\","
-										+ "\"executorId\":,"
-										+ "\"taskStatusId\":" + user2.getId() + ","
-										+ "\"labelIds\":[" + label1.getId() + "," + label2.getId()+ "]}"
-								)
+			.perform(
+				post("/tasks")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("{\"name\":\"new task\","
+							+ "\"description\":\"task description\","
+							+ "\"executorId\":,"
+							+ "\"taskStatusId\":" + user2.getId() + ","
+							+ "\"labelIds\":["
+							+ label1.getId()
+							+ "," + label2.getId() + "]}")
 				)
 				.andReturn()
 				.getResponse();
@@ -193,15 +197,14 @@ class TaskControllerTest {
 	@Test
 	void testCreateEmptyName() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(
-						post("/tasks")
-								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"\","
-										+ "\"description\":\"new task description\","
-										+ "\"executorId\":1,"
-										+ "\"taskStatusId\":1,"
-										+ "\"labelIds\":[1,2,3]}"
-								)
+			.perform(
+				post("/tasks")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content("{\"name\":\"\","
+							+ "\"description\":\"new task description\","
+							+ "\"executorId\":1,"
+							+ "\"taskStatusId\":1,"
+							+ "\"labelIds\":[1,2,3]}")
 				)
 				.andReturn()
 				.getResponse();
@@ -217,14 +220,14 @@ class TaskControllerTest {
 	@Test
 	void testCreateTaskNoStatus() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(
-						post("/tasks")
-								.contentType(MediaType.APPLICATION_JSON)
-								.content("{\"name\":\"new task with\","
-										+ "\"description\":\"new task description\","
-										+ "\"executorId\":1,"
-										+ "\"taskStatusId\":,"
-										+ "\"labelIds\":[1,2,3]}"
+			.perform(
+				post("/tasks")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"name\":\"new task with\","
+						+ "\"description\":\"new task description\","
+						+ "\"executorId\":1,"
+						+ "\"taskStatusId\":,"
+						+ "\"labelIds\":[1,2,3]}"
 								)
 				)
 				.andReturn()
@@ -268,7 +271,8 @@ class TaskControllerTest {
 								+ "\"description\":\"updated description\","
 								+ "\"executorId\":" + user1.getId() + ","
 								+ "\"taskStatusId\":" + user2.getId() + ","
-								+ "\"labelIds\":[" + label1.getId() + "," + label2.getId()+ "]}"
+								+ "\"labelIds\":[" + label1.getId()
+								+ "," + label2.getId() + "]}"
 						)
 				)
 				.andReturn()

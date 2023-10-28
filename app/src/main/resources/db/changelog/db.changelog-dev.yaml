@@ -1,132 +1,111 @@
-#databaseChangeLog:
-#  - changeSet:
-#      id: insert-test
-#      author: vasiliy
-#      changes:
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: user_seq
-#              - column:
-#                  name: email
-#                  value: mynameismazataka@zeleniyslonik.com
-#              - column:
-#                  name: created_at
-#                  value: now()
-#              - column:
-#                  name: first_name
-#                  value: mazataka
-#              - column:
-#                  name: last_name
-#                  value: kulikitakata
-#              - column:
-#                  name: password
-#                  value: $2a$10$5xjzr0ydCtVJYZjMlnjxiOPCaEy2EFoGoFnkInU2zwulQu3rq3.b.
-#
-#            tableName: users
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: user_seq
-#              - column:
-#                  name: email
-#                  value: asfaltoukladchik@vsyazizndoroga.net
-#              - column:
-#                  name: created_at
-#                  value: now()
-#              - column:
-#                  name: first_name
-#                  value: candybober
-#              - column:
-#                  name: last_name
-#                  value: Nagolove
-#              - column:
-#                  name: password
-#                  value: $2a$10$5xjzr0ydCtVJYZjMlnjxiOPCaEy2EFoGoFnkInU2zwulQu3rq3.b.
-#            tableName: users
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: status_seq
-#              - column:
-#                  name: name
-#                  value: new
-#              - column:
-#                  name: created_at
-#                  value: now()
-#            tableName: statuses
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: status_seq
-#              - column:
-#                  name: name
-#                  value: in work
-#              - column:
-#                  name: created_at
-#                  value: now()
-#            tableName: statuses
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: status_seq
-#              - column:
-#                  name: name
-#                  value: on test
-#              - column:
-#                  name: created_at
-#                  value: now()
-#            tableName: statuses
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: status_seq
-#              - column:
-#                  name: name
-#                  value: finished
-#              - column:
-#                  name: created_at
-#                  value: now()
-#            tableName: statuses
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: label_seq
-#              - column:
-#                  name: name
-#                  value: green
-#              - column:
-#                  name: created_at
-#                  value: now()
-#            tableName: labels
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: label_seq
-#              - column:
-#                  name: name
-#                  value: blue
-#              - column:
-#                  name: created_at
-#                  value: now()
-#            tableName: labels
-#        - insert:
-#            columns:
-#              - column:
-#                  name: id
-#                  valueSequenceNext: label_seq
-#              - column:
-#                  name: name
-#                  value: red
-#              - column:
-#                  name: created_at
-#                  value: now()
-#            tableName: labels
+databaseChangeLog:
+  - changeSet:
+      id: insert-test
+      author: vasiliy
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: user_seq
+              - column:
+                  name: email
+                  value: testuser@test.com
+              - column:
+                  name: created_at
+                  value: now()
+              - column:
+                  name: first_name
+                  value: test
+              - column:
+                  name: last_name
+                  value: user
+              - column:
+                  name: password
+                  value: $2a$10$5xjzr0ydCtVJYZjMlnjxiOPCaEy2EFoGoFnkInU2zwulQu3rq3.b.
+
+            tableName: users
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: status_seq
+              - column:
+                  name: name
+                  value: new
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: status_seq
+              - column:
+                  name: name
+                  value: in work
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: status_seq
+              - column:
+                  name: name
+                  value: on test
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: status_seq
+              - column:
+                  name: name
+                  value: finished
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: statuses
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: label_seq
+              - column:
+                  name: name
+                  value: green
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: labels
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: label_seq
+              - column:
+                  name: name
+                  value: blue
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: labels
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  valueSequenceNext: label_seq
+              - column:
+                  name: name
+                  value: red
+              - column:
+                  name: created_at
+                  value: now()
+            tableName: labels

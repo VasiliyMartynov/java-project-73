@@ -4,7 +4,11 @@ import hexlet.code.dto.User.UserCreateDTO;
 import hexlet.code.dto.User.UserShowDTO;
 import hexlet.code.dto.User.UserUpdateDTO;
 import hexlet.code.models.User;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(

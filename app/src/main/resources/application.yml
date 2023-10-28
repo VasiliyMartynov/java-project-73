@@ -1,7 +1,7 @@
 server:
   port: ${PORT:8080}
-  servlet:
-    context-path: /api
+#  servlet:
+#    context-path: /api
 logging:
   level:
     root: DEBUG
@@ -13,12 +13,18 @@ spring:
   output:
     ansi:
       enabled: always
-sentry:
-  dsn: https://examplePublicKey@o0.ingest.sentry.io/0
-  tracesSampleRate: 1.0
-rsa:
-  private-key: classpath:certs/private.pem
-  public-key: classpath:certs/public.pem
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+base-url: /api
+
+#sentry:
+#  dsn: https://examplePublicKey@o0.ingest.sentry.io/0
+#  tracesSampleRate: 1.0
+#rsa:
+#  private-key: classpath:certs/private.pem
+#  public-key: classpath:certs/public.pem
 
 
 

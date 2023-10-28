@@ -1,74 +1,109 @@
 package hexlet.code.config;
 
-import hexlet.code.services.UserDetailsServiceImpl;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
+import hexlet.code.component.JWTHelper;
+import hexlet.code.filter.JWTAuthenticationFilter;
+import hexlet.code.filter.JWTAuthorizationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    @Autowired
-    private final JwtDecoder jwtDecoder;
 
-    @Autowired
-    private UserDetailsServiceImpl userService;
+    public static final String LOGIN = "/login";
+    public static final List<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector)
-            throws Exception {
-        // TODO: remove after merge
-        // https://github.com/spring-projects/spring-security/issues/13568#issuecomment-1645059215
-        var mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
-        return http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(mvcMatcherBuilder.pattern("/login")).permitAll()
-//                        .requestMatchers(mvcMatcherBuilder.pattern("/users/*")).permitAll()
-//                        .requestMatchers(mvcMatcherBuilder.pattern("/users/secret/*")).permitAll()
-//                        .requestMatchers(mvcMatcherBuilder.pattern("/users")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer((rs) -> rs.jwt((jwt) -> jwt.decoder(jwtDecoder)))
-                .httpBasic(Customizer.withDefaults())
-                .build();
+    //Note: Сейчас разрешены:
+    // - GET('/api/users')
+    // - POST('/api/users')
+    // - POST('/api/login')
+    // - все запросы НЕ начинающиеся на '/api'
+
+    private final UserDetailsService userDetailsService;
+    private final JWTHelper jwtHelper;
+    private final String baseUrl;
+    private final RequestMatcher loginRequest;
+    private final RequestMatcher publicUrls;
+
+    public SecurityConfig(@Value("${base-url}") final String baseUrl,
+                          final UserDetailsService userDetailsService,
+                          final JWTHelper jwtHelper) {
+        this.baseUrl = baseUrl;
+        this.userDetailsService = userDetailsService;
+        this.jwtHelper = jwtHelper;
+        this.loginRequest = new AntPathRequestMatcher(baseUrl + LOGIN, POST.toString());
+        this.publicUrls = new OrRequestMatcher(
+                loginRequest,
+                new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, POST.toString()),
+                new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, GET.toString()),
+                new NegatedRequestMatcher(new AntPathRequestMatcher(baseUrl + "/**"))
+        );
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .authenticationProvider(authProvider())
-                .build();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public DaoAuthenticationProvider authProvider() {
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
-        authProvider.setPasswordEncoder(encoder());
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
 
     @Bean
-    public static PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers(publicUrls).permitAll()
+                .anyRequest().authenticated().and()
+                .addFilter(new JWTAuthenticationFilter(
+                        authenticationManager(http.getSharedObject(AuthenticationConfiguration.class)),
+                        loginRequest,
+                        jwtHelper
+                ))
+                .addFilterBefore(
+                        new JWTAuthorizationFilter(publicUrls, jwtHelper),
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .formLogin().disable()
+                .sessionManagement().disable()
+                .logout().disable();
+
+        return http.build();
     }
 }
