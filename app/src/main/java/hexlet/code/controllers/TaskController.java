@@ -1,14 +1,20 @@
 package hexlet.code.controllers;
 
+import hexlet.code.AppApplication;
 import hexlet.code.dto.Task.TaskCreateDTO;
 import hexlet.code.dto.Task.TaskShowDTO;
 import hexlet.code.dto.Task.TaskUpdateDTO;
-import hexlet.code.repository.TaskRepository;
 import hexlet.code.services.TaskService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.log.LogMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,13 +30,16 @@ import java.util.List;
 @RequestMapping("${base-url}" + TaskController.TASK_CONTROLLER_PATH)
 @AllArgsConstructor
 public class TaskController {
-    public static final String ID = "/{id}";
+
+    private static final Log logger = LogFactory.getLog(TaskController.class);
+    private static final String ONLY_OWNER_BY_ID = """
+            @userRepository.findById(#id).get().getEmail() == authentication.getName()
+        """;
     public static final String TASK_CONTROLLER_PATH = "/tasks";
     private TaskService taskService;
-    private TaskRepository taskRepository;
 
     //GET Task BY ID
-    @GetMapping(ID)
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     TaskShowDTO getTask(@PathVariable long id) {
         return taskService.getTask(id);
@@ -64,9 +73,12 @@ public class TaskController {
     }
 
     //DELETE TASK BY ID
-    @DeleteMapping(ID)
+    @DeleteMapping("/{taskControllerId}")
     @ResponseStatus(HttpStatus.OK)
-    void deleteTask(@PathVariable long id) {
-        taskService.deleteTask(id);
+    @PreAuthorize(ONLY_OWNER_BY_ID)
+    void deleteTask(@PathVariable Long taskControllerId) {
+        System.out.println("TASK CONTROLLER ------------------------------------------------------");
+        logger.info(LogMessage.format("TASK CONTROLLER trying to delete task with ID: %s", taskControllerId));
+        taskService.deleteTask(taskControllerId);
     }
 }

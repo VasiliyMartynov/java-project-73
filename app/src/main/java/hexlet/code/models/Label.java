@@ -33,7 +33,4 @@ public class Label {
 
     @CreationTimestamp
     private Timestamp createdAt;
-
-//    @ManyToMany(mappedBy = "labels")
-//    private Set<Task> tasks = new HashSet<>();
 }

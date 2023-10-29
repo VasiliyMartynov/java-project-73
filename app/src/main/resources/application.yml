@@ -1,8 +1,8 @@
 server:
   port: ${PORT:8080}
-logging:
-  level:
-    root: INFO
+#logging:
+#  level:
+#    root: DEBUG
 spring:
   application:
     name: taskManager

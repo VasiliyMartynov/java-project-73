@@ -33,7 +33,7 @@ class UserControllerTest {
 	private UserRepository userRepository;
 	private User user;
 	private User testUser = new User();
-	private final static String BASEURL = "/api/users";
+	private final String BASEURL = "/api/users";
 
 	@BeforeEach
 	public void setUp() {
@@ -310,7 +310,7 @@ class UserControllerTest {
 	void testDeleteAnotherPerson() throws Exception {
 		userRepository.save(user);
 		MockHttpServletResponse responsePost = mockMvc
-				.perform(delete(BASEURL+ "/" + user.getId()))
+				.perform(delete(BASEURL + "/" + user.getId()))
 				.andReturn()
 				.getResponse();
 

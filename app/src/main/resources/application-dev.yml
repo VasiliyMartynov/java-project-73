@@ -1,6 +1,6 @@
-server:
-  error:
-    include-stacktrace: on_param
+#server:
+#  error:
+#    include-stacktrace: on_param
 spring:
   liquibase:
     contexts: dev
@@ -25,9 +25,11 @@ spring:
         web-allow-others: true
 logging:
   level:
-    org:
-      springframework:
-        web: INFO
-        security: INFO
-    guru.springframework.controllers: INFO
-    org.hibernate: INFO
+    root: DEBUG
+#    org:
+#      springframework: DEBUG
+##    guru.springframework.controllers: DEBUG
+#      hibernate: DEBUG
+#    hexlet:
+#      code: DEBUG
+

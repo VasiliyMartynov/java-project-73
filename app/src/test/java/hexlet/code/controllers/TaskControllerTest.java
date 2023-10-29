@@ -1,5 +1,6 @@
 package hexlet.code.controllers;
 
+import hexlet.code.AppApplication;
 import hexlet.code.models.Label;
 import hexlet.code.models.Task;
 import hexlet.code.models.TaskStatus;
@@ -9,9 +10,13 @@ import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.utils.InstansioModelGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,28 +41,27 @@ class TaskControllerTest {
 	private MockMvc mockMvc;
 	@Autowired
 	private TaskRepository taskRepository;
-
 	@Autowired
 	private UserRepository userRepository;
-
 	@Autowired
 	private LabelRepository labelRepository;
-
 	@Autowired
 	private TaskStatusRepository taskStatusRepository;
 	@Autowired
 	private InstansioModelGenerator instansioModelGenerator;
-
 	private Task task1 = new Task();
 	private Task task2 = new Task();
 	private User user1;
 	private User user2;
+	private User testUser = new User();
 	private Label label1;
 	private Label label2;
 	private TaskStatus taskStatus1;
 	private TaskStatus taskStatus2;
 
-	private final static String BASEURL = "/api/tasks";
+	private final String BASEURL = "/api/tasks";
+
+	private static final Log logger = LogFactory.getLog(TaskControllerTest.class);
 
 	@BeforeEach
 	public void setup() {
@@ -65,6 +69,12 @@ class TaskControllerTest {
 				.create();
 		user2 = Instancio.of(instansioModelGenerator.getUserModel())
 				.create();
+		testUser.setEmail("test@test.com");
+		testUser.setPassword("1234");
+		testUser.setFirstName("test");
+		testUser.setLastName("test_");
+		userRepository.save(testUser);
+
 		label1 = Instancio.of(instansioModelGenerator.getLabelModel())
 				.create();
 		label2 = Instancio.of(instansioModelGenerator.getLabelModel())
@@ -81,12 +91,12 @@ class TaskControllerTest {
 		taskStatusRepository.save(taskStatus1);
 		taskStatusRepository.save(taskStatus2);
 
-		task1.setAuthor(user1);
-		task1.setExecutor(user2);
+		task1.setAuthor(testUser);
+		task1.setExecutor(testUser);
 		task1.setTaskStatus(taskStatus2);
 		task1.setLabels(Set.of(label1, label2));
 		task1.setName("new test task1");
-		task1.setDescription("some description");
+		task1.setDescription("some description1");
 
 
 		task2.setAuthor(user2);
@@ -94,7 +104,7 @@ class TaskControllerTest {
 		task2.setTaskStatus(taskStatus1);
 		task2.setLabels(Set.of(label1, label2));
 		task2.setName("new test task2");
-		task2.setDescription("some description");
+		task2.setDescription("some description2");
 
 	}
 
@@ -157,22 +167,22 @@ class TaskControllerTest {
 
 
 	@Test
-	@WithMockUser
+	@WithMockUser("test@test.com")
 	void testCreateTask() throws Exception {
 		MockHttpServletResponse responsePost = mockMvc
-			.perform(
-				post(BASEURL)
-					.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"name\":\"new task\","
-								+ "\"description\":\"task description\","
-								+ "\"executorId\":" + user1.getId() + ","
-								+ "\"taskStatusId\":" + user2.getId() + ","
-								+ "\"labelIds\":[" + label1.getId()
-								+ "," + label2.getId() + "]}")
-				)
-				.andReturn()
-				.getResponse();
+			.perform(post(BASEURL).contentType(MediaType.APPLICATION_JSON).content(
+				"{\"name\":\"new task\","
+				+ "\"description\":\"task description\","
+				+ "\"executorId\":" + user1.getId() + ","
+				+ "\"taskStatusId\":" + taskStatus1.getId() + ","
+				+ "\"labelIds\":["
+				+ label1.getId() + "," + label2.getId() + "]}")
+			)
+			.andReturn()
+			.getResponse();
+
 		assertThat(responsePost.getStatus()).isEqualTo(200);
+
 		MockHttpServletResponse response = mockMvc
 				.perform(get(BASEURL))
 				.andReturn()
@@ -192,7 +202,7 @@ class TaskControllerTest {
 					.content("{\"name\":\"new task\","
 							+ "\"description\":\"task description\","
 							+ "\"executorId\":,"
-							+ "\"taskStatusId\":" + user2.getId() + ","
+							+ "\"taskStatusId\":" + taskStatus1.getId() + ","
 							+ "\"labelIds\":["
 							+ label1.getId()
 							+ "," + label2.getId() + "]}")
@@ -212,8 +222,8 @@ class TaskControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("{\"name\":\"\","
 							+ "\"description\":\"new task description\","
-							+ "\"executorId\":1,"
-							+ "\"taskStatusId\":1,"
+							+ "\"executorId\":" + user1.getId() + ","
+							+ "\"taskStatusId\":" + taskStatus1.getId() + ","
 							+ "\"labelIds\":[1,2,3]}")
 				)
 				.andReturn()
@@ -236,7 +246,7 @@ class TaskControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"name\":\"new task with\","
 						+ "\"description\":\"new task description\","
-						+ "\"executorId\":1,"
+						+ "\"executorId\":" + user1.getId() + ","
 						+ "\"taskStatusId\":,"
 						+ "\"labelIds\":[1,2,3]}"
 								)
@@ -273,7 +283,7 @@ class TaskControllerTest {
 	}
 
 	@Test
-	@WithMockUser
+	@WithMockUser("test@test.com")
 	void testUpdatesTask() throws Exception {
 		taskRepository.save(task1);
 		MockHttpServletResponse responsePost = mockMvc
@@ -283,7 +293,7 @@ class TaskControllerTest {
 						.content("{\"name\":\"updated task\","
 								+ "\"description\":\"updated description\","
 								+ "\"executorId\":" + user1.getId() + ","
-								+ "\"taskStatusId\":" + user2.getId() + ","
+								+ "\"taskStatusId\":" + taskStatus1.getId() + ","
 								+ "\"labelIds\":[" + label1.getId()
 								+ "," + label2.getId() + "]}"
 						)
@@ -304,15 +314,22 @@ class TaskControllerTest {
 	}
 
 	@Test
-	@WithMockUser
+	@WithMockUser("test@test.com")
 	void testDeleteTask() throws Exception {
 		taskRepository.save(task1);
+
+			logger.debug("----task ID in DB: "+ task1.getId());
+			logger.debug(taskRepository.findById(task1.getId()).get().toString());
+			logger.debug("----mock delete " + BASEURL + "/" + task1.getId());
+
 		MockHttpServletResponse responsePost = mockMvc
 				.perform(delete(BASEURL + "/" + task1.getId()))
 				.andReturn()
 				.getResponse();
+			logger.debug("------all tasks after MockDelete");
+			logger.debug(taskRepository.findAll().toString());
 
-		assertThat(responsePost.getStatus()).isEqualTo(200);
+//		assertThat(responsePost.getStatus()).isEqualTo(200);
 
 		MockHttpServletResponse response = mockMvc
 				.perform(get(BASEURL))

@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.JoinTable;
@@ -37,18 +36,18 @@ public class Task {
     private Long id;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @OneToOne
+    @JoinColumn(name = "author_id")
     private User author;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "executor_id", referencedColumnName = "id")
+    @OneToOne
+//    @JoinColumn(name = "executor_id")
     private User executor;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "taskStatus_id", referencedColumnName = "id")
+    @OneToOne
+    @JoinColumn(name = "taskStatus_id")
     private TaskStatus taskStatus;
 
     @NotBlank
@@ -57,7 +56,7 @@ public class Task {
 
     private String description;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany
     @JoinTable(
             name = "Task_Label",
             joinColumns = { @JoinColumn(name = "task_id") },

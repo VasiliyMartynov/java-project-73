@@ -29,7 +29,6 @@ import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
 public class UserController {
 
     public static final String USER_CONTROLLER_PATH = "/users";
-    public static final String ID = "/{id}";
     private static final String ONLY_OWNER_BY_ID = """
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
         """;
@@ -38,7 +37,7 @@ public class UserController {
 
 
     //GET userDTO BY ID
-    @GetMapping(ID)
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     UserShowDTO getUser(@PathVariable long id) {
         return userService.getUser(id);
@@ -68,7 +67,7 @@ public class UserController {
     }
 
     //DELETE USER BY ID
-    @DeleteMapping(ID)
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteUser(@PathVariable long id) {

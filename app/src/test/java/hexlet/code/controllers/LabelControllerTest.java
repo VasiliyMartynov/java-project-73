@@ -32,7 +32,7 @@ class LabelControllerTest {
 	@Autowired
 	private InstansioModelGenerator instansioModelGenerator;
 	private Label label;
-	private final static String BASEURL = "/api/labels";
+	private final String BASEURL = "/api/labels";
 	@BeforeEach
 	public void setUp() {
 		label = Instancio.of(instansioModelGenerator.getLabelModel())

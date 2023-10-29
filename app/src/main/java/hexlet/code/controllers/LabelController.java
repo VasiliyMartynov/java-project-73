@@ -25,14 +25,12 @@ import static hexlet.code.controllers.LabelController.LABEL_CONTROLLER_PATH;
 @RequestMapping("${base-url}" + LABEL_CONTROLLER_PATH)
 @AllArgsConstructor
 public class LabelController {
-
-    public static final String ID = "/{id}";
     public static final String LABEL_CONTROLLER_PATH = "/labels";
     private LabelService labelService;
     private LabelRepository labelRepository;
 
     //GET Label BY ID
-    @GetMapping(ID)
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     LabelShowDTO getLabel(@PathVariable long id) {
         return labelService.getLabel(id);
@@ -66,7 +64,7 @@ public class LabelController {
     }
 
     //DELETE Label BY ID
-    @DeleteMapping(ID)
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     void deleteLabel(@PathVariable long id) {
         labelService.deleteLabel(id);

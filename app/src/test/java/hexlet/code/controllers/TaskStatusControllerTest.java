@@ -37,7 +37,7 @@ class TaskStatusControllerTest {
 		taskStatus = Instancio.of(instansioModelGenerator.getTaskStatusModel())
 				.create();
 	}
-	private final static String BASEURL = "/api/statuses";
+	private final String BASEURL = "/api/statuses";
 
 	@Test
 	@WithMockUser
