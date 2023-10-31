@@ -44,6 +44,8 @@ public class SecurityConfig {
     private final JWTHelper jwtHelper;
     private final String baseUrl;
     private final RequestMatcher loginRequest;
+
+    private final RequestMatcher h2;
     private final RequestMatcher publicUrls;
 
     public SecurityConfig(@Value("${base-url}") final String baseUrl,
@@ -52,13 +54,13 @@ public class SecurityConfig {
         this.baseUrl = baseUrl;
         this.userDetailsService = userDetailsService;
         this.jwtHelper = jwtHelper;
+        this.h2 = new AntPathRequestMatcher("/h2-console/**");
         this.loginRequest = new AntPathRequestMatcher(baseUrl + LOGIN, POST.toString());
         this.publicUrls = new OrRequestMatcher(
                 loginRequest,
-//                new AntPathRequestMatcher(("/**"))
+                h2,
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, POST.toString()),
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, GET.toString()),
-                new AntPathRequestMatcher("/h2-console/**"),
                 new NegatedRequestMatcher(new AntPathRequestMatcher(baseUrl + "/**"))
         );
     }
@@ -85,7 +87,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-//                .csrf().disable()
+                .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers(publicUrls).permitAll()
                 .anyRequest().authenticated().and()
@@ -100,12 +102,8 @@ public class SecurityConfig {
                 )
                 .headers(headers -> headers.frameOptions().disable())
                 .formLogin().disable()
-
                 .sessionManagement().disable()
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**"))
                 .logout().disable();
-
         return http.build();
     }
 }

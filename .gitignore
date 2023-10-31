@@ -108,3 +108,5 @@ Temporary Items
 /node/
 /frontend/node_modules/
 /frontend/node_modules/
+/taskManagerDB.mv.db
+/taskManagerDB.trace.db
