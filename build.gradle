@@ -1,158 +1,158 @@
 plugins {
-	id 'application'
-	id 'checkstyle'
-	id 'jacoco'
-	id 'org.springframework.boot' version '3.1.5'
-	id 'io.spring.dependency-management' version '1.1.3'
-	id 'com.adarshr.test-logger' version '2.1.1'
-	id 'com.github.ben-manes.versions' version '0.38.0'
-	id 'org.liquibase.gradle' version '2.2.0'
-	id "org.springdoc.openapi-gradle-plugin" version "1.8.0"
-	id 'com.github.johnrengelman.processes' version '0.5.0'
-	id 'org.siouan.frontend-jdk11' version '6.0.0'
-	id("io.freefair.lombok") version "8.4"
+    id 'application'
+    id 'checkstyle'
+    id 'jacoco'
+    id 'org.springframework.boot' version '3.1.5'
+    id 'io.spring.dependency-management' version '1.1.3'
+    id 'com.adarshr.test-logger' version '2.1.1'
+    id 'com.github.ben-manes.versions' version '0.38.0'
+    id 'org.liquibase.gradle' version '2.2.0'
+    id "org.springdoc.openapi-gradle-plugin" version "1.8.0"
+    id 'com.github.johnrengelman.processes' version '0.5.0'
+    id 'org.siouan.frontend-jdk11' version '6.0.0'
+    id("io.freefair.lombok") version "8.4"
 }
 
 group = 'hexlet.code'
 version = '1.0-SNAPSHOT'
 
 application {
-	mainClass = 'hexlet.code.AppApplication'
+    mainClass = 'hexlet.code.AppApplication'
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    compileOnly 'org.projectlombok:lombok'
 
-	implementation(
-			'org.springframework.boot:spring-boot-starter-data-jpa',
-			'org.springframework.boot:spring-boot-starter-security',
-			'org.springframework.boot:spring-boot-starter-web',
-			'org.springframework.boot:spring-boot-starter-actuator',
-			'org.springframework.boot:spring-boot-starter-validation',
-			'com.querydsl:querydsl-jpa:5.0.0:jakarta',
-			'org.liquibase:liquibase-core',
-			'io.jsonwebtoken:jjwt:0.9.1',
-			'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0',
-			'com.rollbar:rollbar-spring-boot3-webmvc:1.10.0',
+    implementation(
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+            'org.springframework.boot:spring-boot-starter-security',
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-actuator',
+            'org.springframework.boot:spring-boot-starter-validation',
+            'com.querydsl:querydsl-jpa:5.0.0:jakarta',
+            'org.liquibase:liquibase-core',
+            'io.jsonwebtoken:jjwt:0.9.1',
+            'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0',
+            'com.rollbar:rollbar-spring-boot3-webmvc:1.10.0',
 
-			'org.mapstruct:mapstruct:1.5.5.Final',
-			'org.springframework.boot:spring-boot-starter-oauth2-client'
-	)
+            'org.mapstruct:mapstruct:1.5.5.Final',
+            'org.springframework.boot:spring-boot-starter-oauth2-client'
+    )
 
-	liquibaseRuntime(
-			sourceSets.main.output,
-			'org.liquibase:liquibase-core',
-			'info.picocli:picocli:4.7.1',
-			'org.liquibase.ext:liquibase-hibernate6:4.21.1',
-			'org.springframework.boot:spring-boot-starter-data-jpa',
-			'com.h2database:h2'
-	)
+    liquibaseRuntime(
+            sourceSets.main.output,
+            'org.liquibase:liquibase-core',
+            'info.picocli:picocli:4.7.1',
+            'org.liquibase.ext:liquibase-hibernate6:4.21.1',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+            'com.h2database:h2'
+    )
 
-	runtimeOnly(
-			'com.h2database:h2',
-			'org.postgresql:postgresql:42.2.27'
-	)
+    runtimeOnly(
+            'com.h2database:h2',
+            'org.postgresql:postgresql:42.2.27'
+    )
 
-	testImplementation(
-			'org.springframework.boot:spring-boot-starter-security',
-			'org.springframework.security:spring-security-test',
-			'org.springframework.boot:spring-boot-starter-test',
-			'org.assertj:assertj-core:3.11.1',
-			'net.datafaker:datafaker:2.0.2',
-			'org.instancio:instancio-junit:3.4.0'
-	)
+    testImplementation(
+            'org.springframework.boot:spring-boot-starter-security',
+            'org.springframework.security:spring-security-test',
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.assertj:assertj-core:3.11.1',
+            'net.datafaker:datafaker:2.0.2',
+            'org.instancio:instancio-junit:3.4.0'
+    )
 
-	annotationProcessor(
-			'org.projectlombok:lombok',
-			'com.querydsl:querydsl-apt:5.0.0:jakarta',
-			'jakarta.persistence:jakarta.persistence-api:3.1.0',
-			'org.mapstruct:mapstruct-processor:1.5.5.Final'
-	)
+    annotationProcessor(
+            'org.projectlombok:lombok',
+            'com.querydsl:querydsl-apt:5.0.0:jakarta',
+            'jakarta.persistence:jakarta.persistence-api:3.1.0',
+            'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    )
 }
 
 
 wrapper {
-	gradleVersion = '8.3'
-	distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = '8.2'
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 compileJava {
-	options.release = 20
-	options.encoding = 'UTF-8'
+    options.release = 20
+    options.encoding = 'UTF-8'
 }
 
 checkstyle {
-	toolVersion '10.12.1'
+    toolVersion '10.12.1'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 jacocoTestReport {
-	reports {
-		xml.required = true
-		html.required = true
-	}
+    reports {
+        xml.required = true
+        html.required = true
+    }
 }
 
 test {
-	finalizedBy jacocoTestReport
+    finalizedBy jacocoTestReport
 }
 
 jacocoTestReport {
-	dependsOn test
+    dependsOn test
 }
 
 diffChangelog {
-	dependsOn compileJava
+    dependsOn compileJava
 }
 
 liquibase {
-	activities {
-		main {
-			changelogFile 'src/main/resources/db/changelog/db.changelog-diff.yaml'
-			url 'jdbc:h2:./taskManagerDB'
-			referenceUrl 'hibernate:spring:hexlet.code.models' +
-					'?dialect=org.hibernate.dialect.H2Dialect' +
-					'&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy'
-		}
-	}
+    activities {
+        main {
+            changelogFile 'src/main/resources/db/changelog/db.changelog-diff.yaml'
+            url 'jdbc:h2:./taskManagerDB'
+            referenceUrl 'hibernate:spring:hexlet.code.models' +
+                    '?dialect=org.hibernate.dialect.H2Dialect' +
+                    '&hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy'
+        }
+    }
 }
 
 // Сборка фронтенда.
 // Выполняется только если ничего не изменилось.
 // *****************************************************************************
 frontend {
-	nodeVersion = '16.13.1'
-	installScript = 'install'
-	assembleScript = 'run build'
-	packageJsonDirectory = file("${projectDir}/frontend")
+    nodeVersion = '16.13.1'
+    installScript = 'install'
+    assembleScript = 'run build'
+    packageJsonDirectory = file("${projectDir}/frontend")
 }
 
 def configFrontendTasks = {
-	inputs.files(fileTree("$projectDir/frontend").exclude('build', 'node_modules'))
-	outputs.dir("$buildDir/resources/main/static")
+    inputs.files(fileTree("$projectDir/frontend").exclude('build', 'node_modules'))
+    outputs.dir("$buildDir/resources/main/static")
 }
 
 assembleFrontend {
-	configure configFrontendTasks
+    configure configFrontendTasks
 
-	doLast {
-		copy {
-			from "$projectDir/frontend/build"
-			into "$buildDir/resources/main/static"
-		}
-	}
+    doLast {
+        copy {
+            from "$projectDir/frontend/build"
+            into "$buildDir/resources/main/static"
+        }
+    }
 }
 
 installFrontend {
-	configure configFrontendTasks
+    configure configFrontendTasks
 }
 
 processResources.dependsOn assembleFrontend

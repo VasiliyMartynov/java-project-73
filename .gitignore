@@ -110,3 +110,6 @@ Temporary Items
 /frontend/node_modules/
 /taskManagerDB.mv.db
 /taskManagerDB.trace.db
+
+# Ignore Gradle build output directory
+build
