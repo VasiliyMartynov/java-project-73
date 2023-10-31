@@ -1,6 +1,6 @@
-#server:
-#  error:
-#    include-stacktrace: on_param
+server:
+  error:
+    include-stacktrace: on_param
 spring:
   liquibase:
     contexts: dev
@@ -11,10 +11,10 @@ spring:
     url: jdbc:h2:./taskManagerDB
     driver-class-name: org.h2.Driver
   jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
     hibernate:
       ddl-auto: none
   h2:
@@ -22,11 +22,6 @@ spring:
       enabled: true
 logging:
   level:
-    root: DEBUG
-#    org:
-#      springframework: DEBUG
-##    guru.springframework.controllers: DEBUG
-#      hibernate: DEBUG
-#    hexlet:
-#      code: DEBUG
+    root: INFO
+
 

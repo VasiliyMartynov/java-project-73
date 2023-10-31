@@ -15,6 +15,8 @@ import hexlet.code.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.log.LogMessage;
 //import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -28,7 +30,7 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 public class TaskService {
 
-    private static final Log LOGGER = LogFactory.getLog(TaskService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
     private static final String ONLY_OWNER_BY_ID = """
             @userRepository.findById(#id).get().getEmail() == authentication.getName()
         """;
@@ -123,11 +125,11 @@ public class TaskService {
 //    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteTask(long serviceTaskId) {
         System.out.println("deleteTask---------");
-        LOGGER.info(LogMessage.format("TASK SERVICE trying to delete task with ID %s", serviceTaskId));
+        LOGGER.info("TASK SERVICE trying to delete task with ID:  " + serviceTaskId);
         LOGGER.info("trying to find task in repo");
         Task task = taskRepository.findById(serviceTaskId).orElseThrow(
                 () -> new RuntimeException("task with " + serviceTaskId + " not found"));
-        LOGGER.info(LogMessage.format("-----------task is found %s, %s", task.getId(), task.getName()));
+        LOGGER.info("task is found " + task.getId() + " " + task.getName());
         LOGGER.info("-----------trying to delete");
         taskRepository.deleteById(serviceTaskId);
         LOGGER.info("-----------deleted");
