@@ -59,5 +59,4 @@ public class JWTHelper {
         }
         return claims;
     }
-
 }
