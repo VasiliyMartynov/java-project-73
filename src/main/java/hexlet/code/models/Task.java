@@ -1,71 +1,63 @@
 package hexlet.code.models;
 
+import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.JoinTable;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
-import java.sql.Timestamp;
+import org.hibernate.annotations.Fetch;
+import java.util.Date;
 import java.util.Set;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
+import static org.hibernate.annotations.FetchMode.JOIN;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "tasks")
-@Data
-@EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_generator")
     @SequenceGenerator(name = "task_generator", sequenceName = "task_seq", allocationSize = 1)
-    @Column(name = "id")
-    @EqualsAndHashCode.Include
     private Long id;
 
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "author_id")
+    @ManyToOne
     private User author;
 
-    @NotNull
-    @OneToOne
-//    @JoinColumn(name = "executor_id")
+    @ManyToOne
     private User executor;
 
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "taskStatus_id")
+    @ManyToOne
     private TaskStatus taskStatus;
 
     @NotBlank
-    @Size(min = 1)
+    @Size(min = 3)
     private String name;
 
     private String description;
 
     @ManyToMany
-    @JoinTable(
-            name = "Task_Label",
-            joinColumns = { @JoinColumn(name = "task_id") },
-            inverseJoinColumns = { @JoinColumn(name = "label_id") }
-    )
-    @NotNull
+    @Fetch(JOIN)
     private Set<Label> labels;
 
     @CreationTimestamp
-    private Timestamp createdAt;
+    @Temporal(TIMESTAMP)
+    private Date createdAt;
 
 }

@@ -39,6 +39,7 @@ public class SecurityConfig {
     // - POST('/api/users')
     // - POST('/api/login')
     // - все запросы НЕ начинающиеся на '/api'
+    // - h2
 
     private final UserDetailsService userDetailsService;
     private final JWTHelper jwtHelper;
