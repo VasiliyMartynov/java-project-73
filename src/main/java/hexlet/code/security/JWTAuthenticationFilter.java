@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
-import hexlet.code.dto.User.LoginDto;
+import hexlet.code.dto.User.UserCreateDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,21 +34,21 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(final HttpServletRequest request,
                                                 final HttpServletResponse response) throws AuthenticationException {
-        final LoginDto loginData = getLoginData(request);
+        final UserCreateDTO loginData = getLoginData(request);
         final var authRequest = new UsernamePasswordAuthenticationToken(
-                loginData.getUsername(),
+                loginData.getEmail(),
                 loginData.getPassword()
         );
         setDetails(request, authRequest);
         return getAuthenticationManager().authenticate(authRequest);
     }
 
-    private LoginDto getLoginData(final HttpServletRequest request) throws AuthenticationException {
+    private UserCreateDTO getLoginData(final HttpServletRequest request) throws AuthenticationException {
         try {
             final String json = request.getReader()
                     .lines()
                     .collect(Collectors.joining());
-            return MAPPER.readValue(json, LoginDto.class);
+            return MAPPER.readValue(json, UserCreateDTO.class);
         } catch (IOException e) {
             throw new BadCredentialsException("Can't extract login data from request");
         }

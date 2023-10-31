@@ -47,6 +47,8 @@ public class SecurityConfig {
     private final RequestMatcher loginRequest;
 
     private final RequestMatcher h2;
+
+//    private final RequestMatcher all;
     private final RequestMatcher publicUrls;
 
     public SecurityConfig(@Value("${base-url}") final String baseUrl,
@@ -55,11 +57,13 @@ public class SecurityConfig {
         this.baseUrl = baseUrl;
         this.userDetailsService = userDetailsService;
         this.jwtHelper = jwtHelper;
+//        this.all = new AntPathRequestMatcher("/**");
         this.h2 = new AntPathRequestMatcher("/h2-console/**");
         this.loginRequest = new AntPathRequestMatcher(baseUrl + LOGIN, POST.toString());
         this.publicUrls = new OrRequestMatcher(
                 loginRequest,
                 h2,
+//                all,
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, POST.toString()),
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, GET.toString()),
                 new NegatedRequestMatcher(new AntPathRequestMatcher(baseUrl + "/**"))

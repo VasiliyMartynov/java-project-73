@@ -14,7 +14,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-//import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -123,7 +123,7 @@ public class UserController {
     })
     @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(ONLY_OWNER_BY_ID)
+    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteUser(
             @Parameter(description = "id of item to be delete")
             @PathVariable long id) {
@@ -154,7 +154,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize(ONLY_OWNER_BY_ID)
+    @PreAuthorize(ONLY_OWNER_BY_ID)
     public UserShowDTO updateUser(
             @Parameter(description = "id of item to be update")
             @PathVariable long id, @RequestBody UserUpdateDTO user) {

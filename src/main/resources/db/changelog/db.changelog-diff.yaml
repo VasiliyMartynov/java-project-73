@@ -1,6 +1,6 @@
 databaseChangeLog:
 - changeSet:
-    id: 1698753634274-1
+    id: 1698756207710-1
     author: vasiliy (generated)
     changes:
     - createSequence:
@@ -8,7 +8,7 @@ databaseChangeLog:
         sequenceName: label_seq
         startValue: 1
 - changeSet:
-    id: 1698753634274-2
+    id: 1698756207710-2
     author: vasiliy (generated)
     changes:
     - createSequence:
@@ -16,7 +16,7 @@ databaseChangeLog:
         sequenceName: status_seq
         startValue: 1
 - changeSet:
-    id: 1698753634274-3
+    id: 1698756207710-3
     author: vasiliy (generated)
     changes:
     - createSequence:
@@ -24,7 +24,7 @@ databaseChangeLog:
         sequenceName: task_seq
         startValue: 1
 - changeSet:
-    id: 1698753634274-4
+    id: 1698756207710-4
     author: vasiliy (generated)
     changes:
     - createSequence:
@@ -32,7 +32,7 @@ databaseChangeLog:
         sequenceName: user_seq
         startValue: 1
 - changeSet:
-    id: 1698753634274-5
+    id: 1698756207710-5
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -52,7 +52,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: labels
 - changeSet:
-    id: 1698753634274-6
+    id: 1698756207710-6
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -72,7 +72,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: statuses
 - changeSet:
-    id: 1698753634274-7
+    id: 1698756207710-7
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -104,7 +104,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: tasks
 - changeSet:
-    id: 1698753634274-8
+    id: 1698756207710-8
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -125,7 +125,7 @@ databaseChangeLog:
             type: BIGINT
         tableName: tasks_labels
 - changeSet:
-    id: 1698753634274-9
+    id: 1698756207710-9
     author: vasiliy (generated)
     changes:
     - createTable:
@@ -154,7 +154,7 @@ databaseChangeLog:
             type: VARCHAR(255)
         tableName: users
 - changeSet:
-    id: 1698753634274-10
+    id: 1698756207710-10
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -167,7 +167,7 @@ databaseChangeLog:
         referencedTableName: labels
         validate: true
 - changeSet:
-    id: 1698753634274-11
+    id: 1698756207710-11
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -180,7 +180,7 @@ databaseChangeLog:
         referencedTableName: users
         validate: true
 - changeSet:
-    id: 1698753634274-12
+    id: 1698756207710-12
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -193,7 +193,7 @@ databaseChangeLog:
         referencedTableName: statuses
         validate: true
 - changeSet:
-    id: 1698753634274-13
+    id: 1698756207710-13
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
@@ -206,7 +206,7 @@ databaseChangeLog:
         referencedTableName: users
         validate: true
 - changeSet:
-    id: 1698753634274-14
+    id: 1698756207710-14
     author: vasiliy (generated)
     changes:
     - addForeignKeyConstraint:
