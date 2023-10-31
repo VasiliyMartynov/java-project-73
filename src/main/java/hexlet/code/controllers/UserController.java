@@ -41,20 +41,20 @@ public class UserController {
 
     @Operation(summary = "Get item by ID")
     @ApiResponses(value = {
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "200", description = "Found item",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserShowDTO.class)) }),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "400", description = "Invalid id supplied",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "403", description = "Unauthorized",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "404", description = "not found",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "422", description = "Wrong data",
                     content = @Content)
     })
@@ -68,7 +68,7 @@ public class UserController {
 
     @Operation(summary = "Get all items")
     @ApiResponses(value = {
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "200", description = "List of  items",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserShowDTO.class)) }),
@@ -81,14 +81,14 @@ public class UserController {
 
     @Operation(summary = "Create item")
     @ApiResponses(value = {
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "201", description = "Created",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserShowDTO.class)) }),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "403", description = "Unauthorized",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "422", description = "Wrong data",
                     content = @Content)
     })
@@ -105,19 +105,19 @@ public class UserController {
 
     @Operation(summary = "Delete item by Id")
     @ApiResponses(value = {
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "200", description = "Deleted",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "400", description = "Invalid id supplied",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "403", description = "Unauthorized",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "404", description = "Not found",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "422", description = "Wrong data",
                     content = @Content)
     })
@@ -132,20 +132,20 @@ public class UserController {
 
     @Operation(summary = "Update item by Id")
     @ApiResponses(value = {
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "200", description = "updated",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserShowDTO.class)) }),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "400", description = "Invalid id supplied",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "403", description = "Unauthorized",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "404", description = "Not found",
                     content = @Content),
-            @ApiResponse(
+        @ApiResponse(
                     responseCode = "422", description = "Wrong data",
                     content = @Content)
     })

@@ -1,44 +1,76 @@
 package hexlet.code.exceptions.handler;
 
-import hexlet.code.exceptions.ResourceNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
+import java.util.List;
 import java.util.NoSuchElementException;
 
+import hexlet.code.exceptions.SameUserException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+
+@ResponseBody
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
+    @ResponseStatus(UNAUTHORIZED)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public String userNitFoundExceptionHandler(UsernameNotFoundException exception) {
+        return exception.getMessage();
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<String> handleNullPointerException(NullPointerException ex) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
-    }
-
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());
+    public String generalExceptionHandler(Exception exception) {
+        return exception.getMessage();
     }
 
+    @ResponseStatus(NOT_FOUND)
+    @ExceptionHandler(NoSuchElementException.class)
+    public String noSuchElementExceptionHandler(NoSuchElementException exception) {
+        return exception.getMessage();
+    }
 
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    public String validationExceptionsHandler(Exception exception) {
+        return exception.getMessage();
+    }
 
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public List<ObjectError> validationExceptionsHandler(MethodArgumentNotValidException exception) {
+        return exception.getAllErrors();
+    }
+
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public String validationExceptionsHandler(DataIntegrityViolationException exception) {
+        return exception.getCause().getCause().getMessage();
+    }
+
+    @ResponseStatus(FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public String accessDeniedException(AccessDeniedException exception) {
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(SameUserException.class)
+    public String sameUserException(SameUserException exception) {
+        return exception.getMessage();
+    }
 }

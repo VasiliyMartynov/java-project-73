@@ -60,29 +60,29 @@ public class TaskService {
         }
         try {
             Task task = new Task();
-                LOGGER.info("------------Create task ------------");
+            LOGGER.info("------------Create task ------------");
             task.setName(newTask.getName());
-                LOGGER.info("------------Set task name: " + newTask.getName().toString());
+            LOGGER.info("------------Set task name: " + newTask.getName().toString());
 
             task.setDescription(newTask.getDescription());
-                LOGGER.info("------------Set task desciprion: " + newTask.getDescription().toString());
+            LOGGER.info("------------Set task desciprion: " + newTask.getDescription().toString());
 
             task.setAuthor(userService.getCurrentUser());
-                LOGGER.info("------------Set task author: " + userService.getCurrentUser().toString());
+            LOGGER.info("------------Set task author: " + userService.getCurrentUser().toString());
 
             task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
-                LOGGER.info("------------Set task executor: "
+            LOGGER.info("------------Set task executor: "
                         + userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
 
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
-                LOGGER.info("------------Set task status: "
+            LOGGER.info("------------Set task status: "
                     + userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
 
             task.setLabels(newTask.getLabelIds()
                             .stream()
                             .map(labelId -> labelRepository.findById(labelId.longValue()).orElseThrow())
                             .collect(Collectors.toSet()));
-                LOGGER.info("------------Set task labels: " + newTask.getLabelIds().toString());
+            LOGGER.info("------------Set task labels: " + newTask.getLabelIds().toString());
             taskRepository.save(task);
 
             taskRepository.flush();

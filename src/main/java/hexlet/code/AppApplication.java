@@ -11,8 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 @SpringBootApplication
 @SecurityScheme(name = "javainuseapi", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
 public class AppApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(AppApplication.class, args);
-
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(AppApplication.class, args);
+    }
 }
