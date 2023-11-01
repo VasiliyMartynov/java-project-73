@@ -51,6 +51,7 @@ public class SecurityConfig {
 //    private final RequestMatcher all;
     private final RequestMatcher publicUrls;
 
+
     public SecurityConfig(@Value("${base-url}") final String baseUrl,
                           final UserDetailsService userDetailsService,
                           final JWTHelper jwtHelper) {

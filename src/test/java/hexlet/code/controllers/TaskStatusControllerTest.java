@@ -1,50 +1,57 @@
 package hexlet.code.controllers;
 
+import hexlet.code.config.TestConfig;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.utils.InstansioModelGenerator;
+import hexlet.code.utils.TestUtils;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import static hexlet.code.config.TestConfig.TEST_PROFILE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@ActiveProfiles(TEST_PROFILE)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = TestConfig.class)
 class TaskStatusControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private TaskStatusRepository taskStatusRepository;
-    @Autowired
     private InstansioModelGenerator instansioModelGenerator;
+    @Autowired
+    private TaskStatusRepository taskStatusRepository;
     private TaskStatus taskStatus;
+    @Autowired
+    private TestUtils utils;
+    private static final String BASEURL = "/api/statuses";
     @BeforeEach
     public void setUp() {
         taskStatus = Instancio.of(instansioModelGenerator.getTaskStatusModel())
                 .create();
     }
-    private static final String BASEURL = "/api/statuses";
 
     @Test
-    @WithMockUser
     void testGetStatusIfStatusPersist() throws Exception {
         taskStatusRepository.save(taskStatus);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + taskStatus.getId()))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -54,11 +61,9 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetStatusIfStatusNotPersist() throws Exception {
-        var nonExistentID  = taskStatusRepository.findAll().size() + 1;
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + nonExistentID))
+        var nonExistentID  = taskStatusRepository.findAll().size() + 999;
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + nonExistentID))
                 .andReturn()
                 .getResponse();
 
@@ -66,26 +71,22 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetStatusIfStatusNotPersistAndRequestIsNotCorrect() throws Exception {
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + "a"))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + "a"))
                 .andReturn()
                 .getResponse();
 
-        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getStatus()).isEqualTo(422);
         assertThat(response.getContentType()).isNotEqualTo(MediaType.APPLICATION_JSON.toString());
     }
 
     @Test
-    @WithMockUser
     void testGetStatuses() throws Exception {
         taskStatusRepository.save(taskStatus);
         var taskStatus2 = Instancio.of(instansioModelGenerator.getTaskStatusModel())
                 .create();
         taskStatusRepository.save(taskStatus2);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 
@@ -97,20 +98,21 @@ class TaskStatusControllerTest {
 
 
     @Test
-    @WithMockUser
     void testCreateStatus() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                         post(BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"test status\"}"
+                                .content("""
+                                        {
+                                            "name": "test status"
+                                        }
+                                        """
                                 )
                 )
                 .andReturn()
                 .getResponse();
-        assertThat(responsePost.getStatus()).isEqualTo(200);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        assertThat(responsePost.getStatus()).isEqualTo(201);
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
         assertThat(response.getStatus()).isEqualTo(200);
@@ -119,29 +121,33 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testCreateStatusWithNull() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                         post(BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":null}"
+                                .content("""
+                                        {
+                                            "name": null
+                                        }
+                                        """
                                 )
                 )
                 .andReturn()
                 .getResponse();
-        assertThat(responsePost.getStatus()).isEqualTo(400);
+        assertThat(responsePost.getStatus()).isEqualTo(422);
     }
 
     @Test
-    @WithMockUser
     void testUpdatesStatus() throws Exception {
         taskStatusRepository.save(taskStatus);
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                         put(BASEURL + "/" + taskStatus.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"updated status\"}"
+                                .content("""
+                                        {
+                                            "name": "updated status"
+                                        }
+                                        """
                                 )
                 )
                 .andReturn()
@@ -149,8 +155,7 @@ class TaskStatusControllerTest {
 
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + taskStatus.getId()))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -160,18 +165,15 @@ class TaskStatusControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testDeletePerson() throws Exception {
         taskStatusRepository.save(taskStatus);
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(delete(BASEURL + "/" + taskStatus.getId()))
+        final var responsePost = utils.performAuthorizedRequest(delete(BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 

@@ -1,5 +1,6 @@
 package hexlet.code.controllers;
 
+import hexlet.code.config.TestConfig;
 import hexlet.code.models.Label;
 import hexlet.code.models.Task;
 import hexlet.code.models.TaskStatus;
@@ -9,29 +10,35 @@ import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.utils.InstansioModelGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import hexlet.code.utils.TestUtils;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Set;
+import static hexlet.code.config.TestConfig.TEST_PROFILE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@ActiveProfiles(TEST_PROFILE)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = TestConfig.class)
 class TaskControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -45,6 +52,8 @@ class TaskControllerTest {
     private TaskStatusRepository taskStatusRepository;
     @Autowired
     private InstansioModelGenerator instansioModelGenerator;
+    @Autowired
+    private TestUtils utils;
     private Task task1 = new Task();
     private Task task2 = new Task();
     private User user1;
@@ -57,7 +66,7 @@ class TaskControllerTest {
 
     private static final String BASEURL = "/api/tasks";
 
-    private static final Log LOGGER = LogFactory.getLog(TaskControllerTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskControllerTest.class);
 
     @BeforeEach
     public void setup() {
@@ -105,11 +114,9 @@ class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetTaskIfTaskPersist() throws Exception {
         taskRepository.save(task1);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + task1.getId()))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + task1.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -119,12 +126,10 @@ class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetTaskIfTaskNotPersist() throws Exception {
         taskRepository.save(task1);
         var nonExistentID  = taskRepository.findAll().size() + 1;
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + nonExistentID))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + nonExistentID))
                 .andReturn()
                 .getResponse();
 
@@ -134,23 +139,19 @@ class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetTaskIfTaskNotPersistAndRequestIsNotCorrect() throws Exception {
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + "a"))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + "a"))
                 .andReturn()
                 .getResponse();
 
-        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getStatus()).isEqualTo(422);
     }
 
     @Test
-    @WithMockUser
     void testGetTasks() throws Exception {
         taskRepository.save(task1);
         taskRepository.save(task2);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 
@@ -163,24 +164,25 @@ class TaskControllerTest {
 
 
     @Test
-    @WithMockUser("test@test.com")
     void testCreateTask() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-            .perform(post(BASEURL).contentType(MediaType.APPLICATION_JSON).content(
-                "{\"name\":\"new task\","
-                + "\"description\":\"task description\","
-                + "\"executorId\":" + user1.getId() + ","
-                + "\"taskStatusId\":" + taskStatus1.getId() + ","
-                + "\"labelIds\":["
-                + label1.getId() + "," + label2.getId() + "]}")
+        final var responsePost = utils.performAuthorizedRequest(
+                post(BASEURL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                            "{\"name\":\"new task\","
+                            + "\"description\":\"task description\","
+                            + "\"executorId\":" + user1.getId() + ","
+                            + "\"taskStatusId\":" + taskStatus1.getId() + ","
+                            + "\"labelIds\":["
+                            + label1.getId() + "," + label2.getId() + "]}"
+                    )
             )
             .andReturn()
             .getResponse();
 
-        assertThat(responsePost.getStatus()).isEqualTo(200);
+        assertThat(responsePost.getStatus()).isEqualTo(201);
 
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
         assertThat(response.getStatus()).isEqualTo(200);
@@ -189,10 +191,8 @@ class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testCreateTaskNoExecutorId() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-            .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                 post(BASEURL)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("{\"name\":\"new task\","
@@ -201,7 +201,8 @@ class TaskControllerTest {
                             + "\"taskStatusId\":" + taskStatus1.getId() + ","
                             + "\"labelIds\":["
                             + label1.getId()
-                            + "," + label2.getId() + "]}")
+                            + "," + label2.getId() + "]}"
+                    )
                 )
                 .andReturn()
                 .getResponse();
@@ -210,59 +211,53 @@ class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testCreateEmptyName() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-            .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                 post(BASEURL)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("{\"name\":\"\","
                             + "\"description\":\"new task description\","
                             + "\"executorId\":" + user1.getId() + ","
                             + "\"taskStatusId\":" + taskStatus1.getId() + ","
-                            + "\"labelIds\":[1,2,3]}")
+                            + "\"labelIds\":[1,2,3]}"
+                    )
                 )
                 .andReturn()
                 .getResponse();
 
-        assertThat(responsePost.getStatus()).isEqualTo(400);
-        MockHttpServletResponse response = mockMvc
-                .perform(get("/tasks"))
+        assertThat(responsePost.getStatus()).isEqualTo(422);
+        final var response = utils.performAuthorizedRequest(get("/tasks"))
                 .andReturn()
                 .getResponse();
         assertThat(response.getContentAsString()).doesNotContain("new task description");
     }
 
     @Test
-    @WithMockUser
     void testCreateTaskNoStatus() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-            .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                 post(BASEURL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"new task with\","
-                        + "\"description\":\"new task description\","
-                        + "\"executorId\":" + user1.getId() + ","
-                        + "\"taskStatusId\":,"
-                        + "\"labelIds\":[1,2,3]}"
-                                )
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                            "{\"name\":\"new task with\","
+                            + "\"description\":\"new task description\","
+                            + "\"executorId\":" + user1.getId() + ","
+                            + "\"taskStatusId\":,"
+                            + "\"labelIds\":[1,2,3]}"
+                    )
                 )
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(400);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
         assertThat(response.getContentAsString()).doesNotContain("new task with", "new task description");
     }
 
     @Test
-    @WithMockUser
     void testCreateTaskNoJson() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                         post(BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("")
@@ -271,36 +266,33 @@ class TaskControllerTest {
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(400);
-        MockHttpServletResponse response = mockMvc
-                .perform(get("/tasks"))
+        final var response = utils.performAuthorizedRequest(get("/tasks"))
                 .andReturn()
                 .getResponse();
         assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
     }
 
     @Test
-    @WithMockUser("test@test.com")
     void testUpdatesTask() throws Exception {
         taskRepository.save(task1);
-        MockHttpServletResponse responsePost = mockMvc
-            .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                 put(BASEURL + "/" + task1.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"updated task\","
-                                + "\"description\":\"updated description\","
-                                + "\"executorId\":" + user1.getId() + ","
-                                + "\"taskStatusId\":" + taskStatus1.getId() + ","
-                                + "\"labelIds\":[" + label1.getId()
-                                + "," + label2.getId() + "]}"
-                        )
+                    .content(
+                            "{\"name\":\"updated task\","
+                            + "\"description\":\"updated description\","
+                            + "\"executorId\":" + user1.getId() + ","
+                            + "\"taskStatusId\":" + taskStatus1.getId() + ","
+                            + "\"labelIds\":[" + label1.getId()
+                            + "," + label2.getId() + "]}"
+                    )
                 )
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 
@@ -310,7 +302,6 @@ class TaskControllerTest {
     }
 
     @Test
-    @WithMockUser("test@test.com")
     void testDeleteTask() throws Exception {
         taskRepository.save(task1);
 
@@ -318,15 +309,13 @@ class TaskControllerTest {
         LOGGER.debug(taskRepository.findById(task1.getId()).get().toString());
         LOGGER.debug("----mock delete " + BASEURL + "/" + task1.getId());
 
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(delete(BASEURL + "/" + task1.getId()))
+        final var response1 = utils.performAuthorizedRequest(delete(BASEURL + "/" + task1.getId()))
                 .andReturn()
                 .getResponse();
         LOGGER.debug("------all tasks after MockDelete");
         LOGGER.debug(taskRepository.findAll().toString());
 
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 

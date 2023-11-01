@@ -5,10 +5,13 @@ import hexlet.code.dto.Mappers.LabelMapper;
 import hexlet.code.dto.Label.LabelShowDTO;
 import hexlet.code.dto.Label.LabelUpdateDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
+import hexlet.code.exceptions.SameItemException;
 import hexlet.code.models.Label;
 import hexlet.code.repository.LabelRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -42,7 +45,7 @@ public class LabelService {
 
     public LabelShowDTO createLabel(LabelCreateDTO newLabel) throws Exception {
         if (labelRepository.findByName(newLabel.getName()).isPresent()) {
-            throw new Exception(
+            throw new SameItemException(
                     "There is an task status:" + newLabel.getName());
         }
         try {
@@ -50,20 +53,22 @@ public class LabelService {
             labelRepository.save(label);
             labelRepository.flush();
             return labelMapper.INSTANCE.toLabelShowDTO(label);
-        } catch (Exception e) {
-            throw new Exception("Something where wrong");
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Something where wrong");
         }
     }
 
-    public LabelShowDTO updateLabel(long id, LabelUpdateDTO newLabel) {
+    public LabelShowDTO updateLabel(long id, LabelUpdateDTO newLabel) throws Exception {
+        Label label = labelRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(id + " not found")
+        );
         try {
-            Label label = labelRepository.findById(id).orElseThrow();
             label.setName(newLabel.getName());
             labelRepository.save(label);
             return labelMapper.INSTANCE.toLabelShowDTO(label);
 
-        } catch (NoSuchElementException ex) {
-            throw new NoSuchElementException(id + " not found");
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Something where wrong");
         }
     }
 

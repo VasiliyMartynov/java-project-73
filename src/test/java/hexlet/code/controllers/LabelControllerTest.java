@@ -1,37 +1,50 @@
 package hexlet.code.controllers;
 
+import hexlet.code.config.TestConfig;
 import hexlet.code.models.Label;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.utils.InstansioModelGenerator;
+import hexlet.code.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.instancio.Instancio;
+import static hexlet.code.config.TestConfig.TEST_PROFILE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@ActiveProfiles(TEST_PROFILE)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = TestConfig.class)
 class LabelControllerTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelControllerTest.class);
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private LabelRepository labelRepository;
-    @Autowired
     private InstansioModelGenerator instansioModelGenerator;
+    @Autowired
+    private LabelRepository labelRepository;
     private Label label;
+    @Autowired
+    private TestUtils utils;
     private static final String BASEURL = "/api/labels";
     @BeforeEach
     public void setUp() {
@@ -40,11 +53,9 @@ class LabelControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetLabelIfLabelPersist() throws Exception {
         labelRepository.save(label);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + label.getId()))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + label.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -54,12 +65,10 @@ class LabelControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetLabelIfLabelNotPersist() throws Exception {
         labelRepository.save(label);
         var nonExistentID  = labelRepository.findAll().size() + 1;
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + nonExistentID))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + nonExistentID))
                 .andReturn()
                 .getResponse();
 
@@ -67,22 +76,19 @@ class LabelControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testGetLabelIfLabelNotPersistAndRequestIsNotCorrect() throws Exception {
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + "a"))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + "a"))
                 .andReturn()
                 .getResponse();
 
-        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getStatus()).isEqualTo(422);
     }
 
     @Test
-    @WithMockUser
     void testGetLabels() throws Exception {
+
         labelRepository.save(label);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 
@@ -91,22 +97,21 @@ class LabelControllerTest {
         assertThat(response.getContentAsString()).contains(label.getName());
     }
 
-
     @Test
-    @WithMockUser
     void testCreateLabel() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                         post(BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"black\"}"
-                                )
+                                .content("""
+                                        {
+                                            "name": "black"
+                                        }
+                                        """)
                 )
                 .andReturn()
                 .getResponse();
-        assertThat(responsePost.getStatus()).isEqualTo(200);
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        assertThat(responsePost.getStatus()).isEqualTo(201);
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
         assertThat(response.getStatus()).isEqualTo(200);
@@ -115,38 +120,46 @@ class LabelControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testCreateLabelWithNull() throws Exception {
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(
+        final var responsePost = utils.performAuthorizedRequest(
                         post(BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":null}"
-                                )
+                                .content("""
+                                        {
+                                            "name": null
+                                        }
+                                        """)
                 )
                 .andReturn()
                 .getResponse();
-        assertThat(responsePost.getStatus()).isEqualTo(400);
+        assertThat(responsePost.getStatus()).isEqualTo(422);
     }
 
     @Test
-    @WithMockUser
     void testUpdatesLabel() throws Exception {
+        LOGGER.info("START testUpdatesLabel");
+        LOGGER.info("save LABEL in repo");
         labelRepository.save(label);
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(
+        LOGGER.info("saved" + label);
+        LOGGER.info("labelRepository flush");
+        labelRepository.flush();
+        LOGGER.info("labelRepository flush: done");
+        LOGGER.info("Show ALL label " + labelRepository.findAll());
+        LOGGER.info("perform Authorized Request on" + BASEURL + "/" + label.getId());
+        final var responsePost = utils.performAuthorizedRequest(
                         put(BASEURL + "/" + label.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"name\":\"yellow\"}"
-                                )
+                                .content("""
+                                        {
+                                            "name": "yellow"
+                                        }
+                                        """)
                 )
                 .andReturn()
                 .getResponse();
-
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL + "/" + label.getId()))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + label.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -156,23 +169,30 @@ class LabelControllerTest {
     }
 
     @Test
-    @WithMockUser
     void testDeleteLabel() throws Exception {
         labelRepository.save(label);
-        MockHttpServletResponse responsePost = mockMvc
-                .perform(delete(BASEURL + "/" + label.getId()))
+        final var responsePost = utils.performAuthorizedRequest(delete(BASEURL + "/" + label.getId()))
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        MockHttpServletResponse response = mockMvc
-                .perform(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
         assertThat(response.getContentAsString()).doesNotContain(label.getName());
+    }
+
+    @Test
+    void testDeleteLabelWithWrongParam() throws Exception {
+
+        final var responsePost = utils.performAuthorizedRequest(delete(BASEURL + "/" + label.getId()))
+                .andReturn()
+                .getResponse();
+
+        assertThat(responsePost.getStatus()).isEqualTo(422);
     }
 }

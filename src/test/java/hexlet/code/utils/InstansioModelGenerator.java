@@ -28,6 +28,7 @@ public class InstansioModelGenerator {
         labelModel = Instancio.of(Label.class)
                 .ignore(field(Label::getId))
                 .ignore(field(Label::getCreatedAt))
+                .ignore(field(Label::getTasks))
                 .supply(field(Label::getName), () -> faker.gameOfThrones().dragon())
                 .toModel();
 
@@ -43,6 +44,7 @@ public class InstansioModelGenerator {
         taskStatusModel = Instancio.of(TaskStatus.class)
                 .ignore(field(TaskStatus::getId))
                 .ignore(field(TaskStatus::getCreatedAt))
+                .ignore(field(TaskStatus::getTasks))
                 .supply(field(TaskStatus::getName), () -> faker.gameOfThrones().character())
                 .toModel();
     }

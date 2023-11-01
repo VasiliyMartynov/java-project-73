@@ -128,7 +128,7 @@ public class LabelController {
     @ResponseStatus(HttpStatus.OK)
     LabelShowDTO updateLabel(
             @Parameter(description = "id and DTOof item to be update")
-            @PathVariable long id, @RequestBody LabelUpdateDTO label) {
+            @PathVariable long id, @RequestBody LabelUpdateDTO label) throws Exception {
         return labelService.updateLabel(id, label);
     }
 

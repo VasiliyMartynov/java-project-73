@@ -13,12 +13,8 @@ import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.log.LogMessage;
-//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -42,9 +38,14 @@ public class TaskService {
     private TaskStatusRepository taskStatusRepository;
 
     public TaskShowDTO getTask(long id) {
+        LOGGER.debug("Staring method getTask");
+        LOGGER.debug("Finding task in repository with ID: " + id);
+
         Task t = taskRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found")
         );
+
+        LOGGER.debug("Task was found: " + t);
         return taskMapper.INSTANCE.showTask(t);
     }
 
@@ -62,29 +63,29 @@ public class TaskService {
         }
         try {
             Task task = new Task();
-            LOGGER.info("------------Create task ------------");
+            LOGGER.debug("Create task ");
             task.setName(newTask.getName());
-            LOGGER.info("------------Set task name: " + newTask.getName().toString());
+            LOGGER.debug("Set task name: " + newTask.getName().toString());
 
             task.setDescription(newTask.getDescription());
-            LOGGER.info("------------Set task desciprion: " + newTask.getDescription().toString());
+            LOGGER.debug("Set task desciprion: " + newTask.getDescription().toString());
 
             task.setAuthor(userService.getCurrentUser());
-            LOGGER.info("------------Set task author: " + userService.getCurrentUser().toString());
+            LOGGER.debug("Set task author: " + userService.getCurrentUser().toString());
 
             task.setExecutor(userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
-            LOGGER.info("------------Set task executor: "
+            LOGGER.debug("Set task executor: "
                         + userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
 
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
-            LOGGER.info("------------Set task status: "
+            LOGGER.debug("Set task status: "
                     + userRepository.findById((long) newTask.getExecutorId()).orElseThrow());
 
             task.setLabels(newTask.getLabelIds()
                             .stream()
                             .map(labelId -> labelRepository.findById(labelId.longValue()).orElseThrow())
                             .collect(Collectors.toSet()));
-            LOGGER.info("------------Set task labels: " + newTask.getLabelIds().toString());
+            LOGGER.debug("Set task labels: " + newTask.getLabelIds().toString());
             taskRepository.save(task);
 
             taskRepository.flush();
@@ -103,16 +104,10 @@ public class TaskService {
             task.setDescription(newTask.getDescription());
             task.setExecutor(userService.getCurrentUser());
             task.setTaskStatus(taskStatusRepository.findById((long) newTask.getTaskStatusId()).orElseThrow());
-            LOGGER.info("------------updateTask1------------");
-            LOGGER.info(newTask.getLabelIds().toString());
-            LOGGER.info("------------updateTask2------------");
             Set<Label> newLabels = newTask.getLabelIds()
                     .stream()
                     .map(l -> labelRepository.findById(l.longValue()).orElseThrow())
                     .collect(Collectors.toSet());
-            LOGGER.info("------------updateTask3------------");
-            LOGGER.info(newTask.getLabelIds().toString());
-            LOGGER.info("------------updateTask4------------");
             task.setLabels(newLabels);
             taskRepository.save(task);
             return taskMapper.INSTANCE.showTask(task);
@@ -124,14 +119,13 @@ public class TaskService {
 
 //    @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteTask(long serviceTaskId) {
-        System.out.println("deleteTask---------");
-        LOGGER.info("TASK SERVICE trying to delete task with ID:  " + serviceTaskId);
-        LOGGER.info("trying to find task in repo");
+        LOGGER.debug("Trying to delete task with ID:  " + serviceTaskId);
+        LOGGER.debug("finding task in repo");
         Task task = taskRepository.findById(serviceTaskId).orElseThrow(
                 () -> new RuntimeException("task with " + serviceTaskId + " not found"));
-        LOGGER.info("task is found " + task.getId() + " " + task.getName());
-        LOGGER.info("-----------trying to delete");
+        LOGGER.debug("task is found " + task.getId() + " " + task.getName());
+        LOGGER.debug("Trying to delete");
         taskRepository.deleteById(serviceTaskId);
-        LOGGER.info("-----------deleted");
+        LOGGER.debug("OK Deleted");
     }
 }

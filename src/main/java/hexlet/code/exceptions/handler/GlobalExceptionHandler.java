@@ -1,19 +1,19 @@
 package hexlet.code.exceptions.handler;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
-import hexlet.code.exceptions.SameUserException;
+import hexlet.code.exceptions.ResourceNotFoundException;
+import hexlet.code.exceptions.SameItemException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -45,20 +45,20 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(BAD_REQUEST)
-    @ExceptionHandler({HttpMessageNotReadableException.class})
+    @ExceptionHandler(HttpMessageNotReadableException.class)
     public String validationExceptionsHandler(Exception exception) {
         return exception.getMessage();
     }
 
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public List<ObjectError> validationExceptionsHandler(MethodArgumentNotValidException exception) {
-        return exception.getAllErrors();
+    public String methodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        return exception.getMessage();
     }
 
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public String validationExceptionsHandler(DataIntegrityViolationException exception) {
+    public String dataIntegrityViolationException(DataIntegrityViolationException exception) {
         return exception.getCause().getCause().getMessage();
     }
 
@@ -69,8 +69,23 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    @ExceptionHandler(SameUserException.class)
-    public String sameUserException(SameUserException exception) {
+    @ExceptionHandler(SameItemException.class)
+    public String sameItemException(SameItemException exception) {
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public String resourceNotFoundException(ResourceNotFoundException exception) {
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public String methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
         return exception.getMessage();
     }
 }
+
+
+
