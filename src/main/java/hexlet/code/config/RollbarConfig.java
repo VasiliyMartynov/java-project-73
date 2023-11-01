@@ -1,4 +1,3 @@
-
 package hexlet.code.config;
 
 import com.rollbar.notifier.Rollbar;
@@ -15,15 +14,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ComponentScan({
 
 // UPDATE TO YOUR PROJECT PACKAGE
-        "hexlet.code.app",
-        "com.rollbar.spring"
+    "hexlet.code.app",
+    "com.rollbar.spring"
 
 })
 public class RollbarConfig {
 
-    /**
-     * Register a Rollbar bean to configure App with Rollbar.
-     */
     @Bean
     public Rollbar rollbar() {
         return new Rollbar(getRollbarConfigs("${rollbartoken}"));
