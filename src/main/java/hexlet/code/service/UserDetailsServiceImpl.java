@@ -1,4 +1,4 @@
-package hexlet.code.security;
+package hexlet.code.service;
 
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
@@ -8,12 +8,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import static hexlet.code.security.SecurityConfig.DEFAULT_AUTHORITIES;
+import static hexlet.code.config.SecurityConfig.DEFAULT_AUTHORITIES;
 
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     private final UserRepository userRepository;
 
     @Override

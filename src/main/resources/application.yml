@@ -13,7 +13,8 @@ spring:
       filter:
         enabled: true
 base-url: /api
-rollbartoken: ${ROLLBAR_TOKEN}
+
+
 
 
 

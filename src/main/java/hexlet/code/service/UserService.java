@@ -1,4 +1,4 @@
-package hexlet.code.services;
+package hexlet.code.service;
 
 import hexlet.code.dto.User.UserCreateDTO;
 import hexlet.code.dto.User.UserShowDTO;
@@ -50,7 +50,6 @@ public class UserService {
         try {
             var user = userMapper.INSTANCE.createUser(newUser);
             user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-//            user.setPassword(newUser.getPassword());
             userRepository.save(user);
             userRepository.flush();
             return userMapper.INSTANCE.showUser(user);
@@ -87,5 +86,4 @@ public class UserService {
     public User getCurrentUser() {
         return userRepository.findByEmail(getCurrentUserName()).get();
     }
-
 }

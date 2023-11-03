@@ -1,9 +1,9 @@
-package hexlet.code.controllers;
+package hexlet.code.controller;
 
 import hexlet.code.dto.User.UserCreateDTO;
 import hexlet.code.dto.User.UserShowDTO;
 import hexlet.code.dto.User.UserUpdateDTO;
-import hexlet.code.services.UserService;
+import hexlet.code.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
-import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
+import static hexlet.code.controller.UserController.USER_CONTROLLER_PATH;
 
 @RestController
 @AllArgsConstructor
@@ -60,7 +60,7 @@ public class UserController {
     })
     @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
-    UserShowDTO getUser(
+    public UserShowDTO getUser(
             @Parameter(description = "id of item to be find")
             @PathVariable long id) {
         return userService.getUser(id);
@@ -75,7 +75,7 @@ public class UserController {
     })
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    List<UserShowDTO> getUsers() {
+    public List<UserShowDTO> getUsers() {
         return userService.getUsers();
     }
 
@@ -97,7 +97,7 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    UserShowDTO createUser(
+    public UserShowDTO createUser(
             @Parameter(description = "DTO object to create")
             @Valid @RequestBody UserCreateDTO u) throws Exception {
         return userService.createUser(u);

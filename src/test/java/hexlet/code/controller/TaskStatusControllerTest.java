@@ -1,15 +1,14 @@
-package hexlet.code.controllers;
+package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
-import hexlet.code.models.Label;
-import hexlet.code.repository.LabelRepository;
+import hexlet.code.models.TaskStatus;
+import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.utils.InstansioModelGenerator;
 import hexlet.code.utils.TestUtils;
+import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,56 +17,52 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.instancio.Instancio;
 import static hexlet.code.config.TestConfig.TEST_PROFILE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles(TEST_PROFILE)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = TestConfig.class)
-class LabelControllerTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LabelControllerTest.class);
+class TaskStatusControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private InstansioModelGenerator instansioModelGenerator;
     @Autowired
-    private LabelRepository labelRepository;
-    private Label label;
+    private TaskStatusRepository taskStatusRepository;
+    private TaskStatus taskStatus;
     @Autowired
     private TestUtils utils;
-    private static final String BASEURL = "/api/labels";
+    private static final String BASEURL = "/api/statuses";
     @BeforeEach
     public void setUp() {
-        label = Instancio.of(instansioModelGenerator.getLabelModel())
+        taskStatus = Instancio.of(instansioModelGenerator.getTaskStatusModel())
                 .create();
     }
 
     @Test
-    void testGetLabelIfLabelPersist() throws Exception {
-        labelRepository.save(label);
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + label.getId()))
+    void testGetStatusIfStatusPersist() throws Exception {
+        taskStatusRepository.save(taskStatus);
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains(label.getName());
+        assertThat(response.getContentAsString()).contains(taskStatus.getName());
     }
 
     @Test
-    void testGetLabelIfLabelNotPersist() throws Exception {
-        labelRepository.save(label);
-        var nonExistentID  = labelRepository.findAll().size() + 1;
+    void testGetStatusIfStatusNotPersist() throws Exception {
+        var nonExistentID  = taskStatusRepository.findAll().size() + 999;
         final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + nonExistentID))
                 .andReturn()
                 .getResponse();
@@ -76,37 +71,43 @@ class LabelControllerTest {
     }
 
     @Test
-    void testGetLabelIfLabelNotPersistAndRequestIsNotCorrect() throws Exception {
+    void testGetStatusIfStatusNotPersistAndRequestIsNotCorrect() throws Exception {
         final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + "a"))
                 .andReturn()
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(422);
+        assertThat(response.getContentType()).isNotEqualTo(MediaType.APPLICATION_JSON.toString());
     }
 
     @Test
-    void testGetLabels() throws Exception {
-
-        labelRepository.save(label);
+    void testGetStatuses() throws Exception {
+        taskStatusRepository.save(taskStatus);
+        var taskStatus2 = Instancio.of(instansioModelGenerator.getTaskStatusModel())
+                .create();
+        taskStatusRepository.save(taskStatus2);
         final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains(label.getName());
+        assertThat(response.getContentAsString()).contains(taskStatus.getName());
+        assertThat(response.getContentAsString()).contains(taskStatus2.getName());
     }
 
+
     @Test
-    void testCreateLabel() throws Exception {
+    void testCreateStatus() throws Exception {
         final var responsePost = utils.performAuthorizedRequest(
                         post(BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                            "name": "black"
+                                            "name": "test status"
                                         }
-                                        """)
+                                        """
+                                )
                 )
                 .andReturn()
                 .getResponse();
@@ -116,11 +117,11 @@ class LabelControllerTest {
                 .getResponse();
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains("black");
+        assertThat(response.getContentAsString()).contains("test status");
     }
 
     @Test
-    void testCreateLabelWithNull() throws Exception {
+    void testCreateStatusWithNull() throws Exception {
         final var responsePost = utils.performAuthorizedRequest(
                         post(BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +129,8 @@ class LabelControllerTest {
                                         {
                                             "name": null
                                         }
-                                        """)
+                                        """
+                                )
                 )
                 .andReturn()
                 .getResponse();
@@ -136,42 +138,36 @@ class LabelControllerTest {
     }
 
     @Test
-    void testUpdatesLabel() throws Exception {
-        LOGGER.info("START testUpdatesLabel");
-        LOGGER.info("save LABEL in repo");
-        labelRepository.save(label);
-        LOGGER.info("saved" + label);
-        LOGGER.info("labelRepository flush");
-        labelRepository.flush();
-        LOGGER.info("labelRepository flush: done");
-        LOGGER.info("Show ALL label " + labelRepository.findAll());
-        LOGGER.info("perform Authorized Request on" + BASEURL + "/" + label.getId());
+    void testUpdatesStatus() throws Exception {
+        taskStatusRepository.save(taskStatus);
         final var responsePost = utils.performAuthorizedRequest(
-                        put(BASEURL + "/" + label.getId())
+                        put(BASEURL + "/" + taskStatus.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                            "name": "yellow"
+                                            "name": "updated status"
                                         }
-                                        """)
+                                        """
+                                )
                 )
                 .andReturn()
                 .getResponse();
+
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + label.getId()))
+        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains("yellow");
+        assertThat(response.getContentAsString()).contains("updated status");
     }
 
     @Test
-    void testDeleteLabel() throws Exception {
-        labelRepository.save(label);
-        final var responsePost = utils.performAuthorizedRequest(delete(BASEURL + "/" + label.getId()))
+    void testDeletePerson() throws Exception {
+        taskStatusRepository.save(taskStatus);
+        final var responsePost = utils.performAuthorizedRequest(delete(BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -183,16 +179,6 @@ class LabelControllerTest {
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).doesNotContain(label.getName());
-    }
-
-    @Test
-    void testDeleteLabelWithWrongParam() throws Exception {
-
-        final var responsePost = utils.performAuthorizedRequest(delete(BASEURL + "/" + label.getId()))
-                .andReturn()
-                .getResponse();
-
-        assertThat(responsePost.getStatus()).isEqualTo(422);
+        assertThat(response.getContentAsString()).doesNotContain(taskStatus.getName());
     }
 }

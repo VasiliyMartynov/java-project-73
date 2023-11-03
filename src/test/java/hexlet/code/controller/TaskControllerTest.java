@@ -1,4 +1,4 @@
-package hexlet.code.controllers;
+package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
 import hexlet.code.models.Label;
@@ -15,8 +15,6 @@ import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,8 +63,6 @@ class TaskControllerTest {
     private TaskStatus taskStatus2;
 
     private static final String BASEURL = "/api/tasks";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskControllerTest.class);
 
     @BeforeEach
     public void setup() {
@@ -304,21 +300,12 @@ class TaskControllerTest {
     @Test
     void testDeleteTask() throws Exception {
         taskRepository.save(task1);
-
-        LOGGER.debug("----task ID in DB: " + task1.getId());
-        LOGGER.debug(taskRepository.findById(task1.getId()).get().toString());
-        LOGGER.debug("----mock delete " + BASEURL + "/" + task1.getId());
-
         final var response1 = utils.performAuthorizedRequest(delete(BASEURL + "/" + task1.getId()))
                 .andReturn()
                 .getResponse();
-        LOGGER.debug("------all tasks after MockDelete");
-        LOGGER.debug(taskRepository.findAll().toString());
-
         final var response = utils.performAuthorizedRequest(get(BASEURL))
                 .andReturn()
                 .getResponse();
-
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
         assertThat(response.getContentAsString()).doesNotContain(task1.getName());

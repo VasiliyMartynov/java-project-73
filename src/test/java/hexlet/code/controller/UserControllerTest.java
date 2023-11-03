@@ -1,4 +1,4 @@
-package hexlet.code.controllers;
+package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
 import hexlet.code.models.User;
@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = TestConfig.class)
 class UserControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired

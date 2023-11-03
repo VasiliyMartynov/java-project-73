@@ -11,10 +11,10 @@ spring:
     url: jdbc:h2:./taskManagerDB
     driver-class-name: org.h2.Driver
   jpa:
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        format_sql: true
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
     hibernate:
       ddl-auto: none
   h2:
@@ -22,7 +22,7 @@ spring:
       enabled: true
 logging:
   level:
-    root: INFO
+    root: DEBUG
     hexlet:
       code: DEBUG
 

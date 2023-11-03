@@ -1,4 +1,4 @@
-package hexlet.code.services;
+package hexlet.code.service;
 
 import hexlet.code.dto.Label.LabelCreateDTO;
 import hexlet.code.dto.Mappers.LabelMapper;
@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class LabelService {
-
     private LabelRepository labelRepository;
     private LabelMapper labelMapper;
 

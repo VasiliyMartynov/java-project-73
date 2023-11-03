@@ -9,23 +9,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-
 @Configuration()
 @EnableWebMvc
 @ComponentScan({
-
-// UPDATE TO YOUR PROJECT PACKAGE
     "hexlet.code.app",
     "com.rollbar.spring"
-
 })
 public class RollbarConfig {
 
-    @Value("${rollbar_token:}")
+    @Value("${rollbartoken:}")
     private String rollbarToken;
-
-    @Value("${spring.profiles.active:}")
-    private String activeProfile;
 
     @Bean
     public Rollbar rollbar() {
@@ -37,7 +30,6 @@ public class RollbarConfig {
         // Reference ConfigBuilder.java for all the properties you can set for Rollbar
         return RollbarSpringConfigBuilder.withAccessToken(accessToken)
                 .environment("development")
-                .enabled(activeProfile == "prod")
                 .build();
     }
 }

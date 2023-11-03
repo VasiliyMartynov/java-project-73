@@ -33,8 +33,10 @@ import static org.hibernate.annotations.FetchMode.JOIN;
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_generator")
-    @SequenceGenerator(name = "task_generator", sequenceName = "task_seq", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "task_generator")
+//    @SequenceGenerator(name = "task_generator", sequenceName = "task_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_gen")
+    @SequenceGenerator(name = "sequence_gen", sequenceName = "task_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne

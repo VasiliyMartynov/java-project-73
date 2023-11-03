@@ -1,6 +1,10 @@
-package hexlet.code.security;
+package hexlet.code.config;
 
 import java.util.List;
+
+import hexlet.code.security.JWTAuthenticationFilter;
+import hexlet.code.security.JWTAuthorizationFilter;
+import hexlet.code.component.JWTHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +26,7 @@ import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import static hexlet.code.controllers.UserController.USER_CONTROLLER_PATH;
+import static hexlet.code.controller.UserController.USER_CONTROLLER_PATH;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
@@ -45,12 +49,9 @@ public class SecurityConfig {
     private final JWTHelper jwtHelper;
     private final String baseUrl;
     private final RequestMatcher loginRequest;
-
     private final RequestMatcher h2;
 
-//    private final RequestMatcher all;
     private final RequestMatcher publicUrls;
-
 
     public SecurityConfig(@Value("${base-url}") final String baseUrl,
                           final UserDetailsService userDetailsService,
@@ -58,13 +59,11 @@ public class SecurityConfig {
         this.baseUrl = baseUrl;
         this.userDetailsService = userDetailsService;
         this.jwtHelper = jwtHelper;
-//        this.all = new AntPathRequestMatcher("/**");
         this.h2 = new AntPathRequestMatcher("/h2-console/**");
         this.loginRequest = new AntPathRequestMatcher(baseUrl + LOGIN, POST.toString());
         this.publicUrls = new OrRequestMatcher(
                 loginRequest,
                 h2,
-//                all,
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, POST.toString()),
                 new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, GET.toString()),
                 new NegatedRequestMatcher(new AntPathRequestMatcher(baseUrl + "/**"))
@@ -88,7 +87,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

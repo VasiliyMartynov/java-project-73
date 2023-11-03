@@ -2,6 +2,8 @@ package hexlet.code.security;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import hexlet.code.component.JWTHelper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
-import static hexlet.code.security.SecurityConfig.DEFAULT_AUTHORITIES;
+import static hexlet.code.config.SecurityConfig.DEFAULT_AUTHORITIES;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;

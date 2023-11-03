@@ -3,7 +3,7 @@ package hexlet.code.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.security.JWTHelper;
+import hexlet.code.component.JWTHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,7 +30,8 @@ public class TestUtils {
     }
 
     public ResultActions performAuthorizedRequest(
-            final MockHttpServletRequestBuilder request, String newUser) throws Exception {
+            final MockHttpServletRequestBuilder request, String newUser)
+            throws Exception {
         final String token = jwtHelper.expiring(Map.of(SPRING_SECURITY_FORM_USERNAME_KEY, newUser));
         request.header(AUTHORIZATION, token);
         return perform(request);

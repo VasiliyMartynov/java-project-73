@@ -18,13 +18,13 @@ import static hexlet.code.config.TestConfig.TEST_PROFILE;
 @ComponentScan(basePackages = "hexlet.code")
 @PropertySource(value = "classpath:/config/application.yml")
 public class TestConfig {
+    public static final String TEST_PROFILE = "test";
 
     @Bean
     public Faker getFaker() {
         return new Faker();
     }
 
-    public static final String TEST_PROFILE = "test";
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder().build();

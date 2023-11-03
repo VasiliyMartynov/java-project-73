@@ -1,4 +1,4 @@
-package hexlet.code.security;
+package hexlet.code.component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Clock;

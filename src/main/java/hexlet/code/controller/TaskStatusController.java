@@ -1,9 +1,9 @@
-package hexlet.code.controllers;
+package hexlet.code.controller;
 
 import hexlet.code.dto.TaskStatus.TaskStatusCreateDTO;
 import hexlet.code.dto.TaskStatus.TaskStatusShowDTO;
 import hexlet.code.dto.TaskStatus.TaskStatusUpdateDTO;
-import hexlet.code.services.TaskStatusService;
+import hexlet.code.service.TaskStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import java.util.List;
-import static hexlet.code.controllers.TaskStatusController.TASK_STATUS_CONTROLLER_PATH;
+import static hexlet.code.controller.TaskStatusController.TASK_STATUS_CONTROLLER_PATH;
 
 @RestController
 @RequestMapping("${base-url}" + TASK_STATUS_CONTROLLER_PATH)
@@ -55,7 +55,7 @@ public class TaskStatusController {
     })
     @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
-    TaskStatusShowDTO getTaskStatus(
+    public TaskStatusShowDTO getTaskStatus(
             @Parameter(description = "id of item to be find")
             @PathVariable long id) {
         return taskStatusService.getTaskStatus(id);
@@ -73,7 +73,7 @@ public class TaskStatusController {
     })
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    List<TaskStatusShowDTO> getTaskStatuses() {
+    public List<TaskStatusShowDTO> getTaskStatuses() {
         return taskStatusService.getTaskStatuses();
     }
 
@@ -91,11 +91,10 @@ public class TaskStatusController {
                     content = @Content)
     })
     @PostMapping(
-//            value = "",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    TaskStatusShowDTO createTaskStatus(
+    public TaskStatusShowDTO createTaskStatus(
             @Parameter(description = "DTO object to create")
             @Valid @RequestBody TaskStatusCreateDTO task) throws Exception {
         return taskStatusService.createTaskStatus(task);
@@ -125,7 +124,7 @@ public class TaskStatusController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    TaskStatusShowDTO updateTaskStatus(
+    public TaskStatusShowDTO updateTaskStatus(
             @Parameter(description = "id and DTO of item to be update")
             @PathVariable long id, @RequestBody TaskStatusUpdateDTO task) {
         return taskStatusService.updateTaskStatus(id, task);
@@ -151,7 +150,7 @@ public class TaskStatusController {
     })
     @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
-    void deleteTaskStatus(
+    public void deleteTaskStatus(
             @Parameter(description = "id of item to be delete")
             @PathVariable long id) {
         taskStatusService.deleteTaskStatus(id);

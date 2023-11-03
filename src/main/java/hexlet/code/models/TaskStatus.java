@@ -31,8 +31,10 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 public class TaskStatus {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "status_generator")
-    @SequenceGenerator(name = "status_generator", sequenceName = "status_seq", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "status_generator")
+//    @SequenceGenerator(name = "status_generator", sequenceName = "status_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_gen")
+    @SequenceGenerator(name = "sequence_gen", sequenceName = "status_seq", allocationSize = 1)
     @Column(name = "id")
     private Long id;
 

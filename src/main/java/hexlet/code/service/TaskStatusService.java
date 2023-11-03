@@ -1,4 +1,4 @@
-package hexlet.code.services;
+package hexlet.code.service;
 
 import hexlet.code.dto.TaskStatus.TaskStatusCreateDTO;
 import hexlet.code.dto.Mappers.TaskStatusMapper;
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class TaskStatusService {
-
     private TaskStatusRepository taskStatusRepository;
     private TaskStatusMapper taskStatusMapper;
 
