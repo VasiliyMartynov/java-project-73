@@ -33,13 +33,23 @@ public class TaskService {
     private UserService userService;
     private TaskStatusRepository taskStatusRepository;
 
+    /**
+     * getTask return TaskShowDTO object of exist Task in database.
+     * @param id
+     * @return TaskShowDTO
+     */
     public TaskShowDTO getTask(long id) {
         Task t = taskRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found")
         );
         return taskMapper.INSTANCE.showTask(t);
     }
-
+    /**
+     * getTasks return list of TaskShowDTO objects of Task model that were exist in database.
+     * input is predicate for QueryDSL
+     * @param predicate
+     * @return List<TaskShowDTO>
+     */
     public List<TaskShowDTO> getTasks(Predicate predicate) {
         return StreamSupport
                 .stream(taskRepository.findAll(predicate).spliterator(), false)
@@ -47,6 +57,12 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * createTask add new Task objcet in database and  return TaskShowDTO object of this Task.
+     * @param newTask
+     * @return TaskShowDTO
+     * @throws Exception
+     */
     public TaskShowDTO createTask(TaskCreateDTO newTask) throws Exception {
         if (taskRepository.findByName(newTask.getName()).isPresent()) {
             throw new Exception(
@@ -73,6 +89,12 @@ public class TaskService {
         }
     }
 
+    /**
+     * updateTask update exist Task in database and return TaskShowDTO of updated Task.
+     * @param id
+     * @param newTask
+     * @return TaskShowDTO
+     */
     public TaskShowDTO updateTask(long id, TaskUpdateDTO newTask) {
         try {
             Task task = taskRepository.findById(id).orElseThrow();
@@ -94,6 +116,10 @@ public class TaskService {
         }
     }
 
+    /**
+     * deleteTask is delete exist Task from database.
+     * @param serviceTaskId
+     */
     public void deleteTask(long serviceTaskId) {
         Task task = taskRepository.findById(serviceTaskId).orElseThrow(
                 () -> new RuntimeException("task with " + serviceTaskId + " not found"));

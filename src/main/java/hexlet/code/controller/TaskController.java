@@ -55,6 +55,7 @@ public class TaskController {
     @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     public TaskShowDTO getTask(
+            @Valid
             @Parameter(description = "id of item to be find")
             @PathVariable long id) {
         return taskService.getTask(id);
@@ -98,8 +99,9 @@ public class TaskController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public TaskShowDTO createTask(
+            @Valid
             @Parameter(description = "DTO object to create")
-            @Valid @RequestBody TaskCreateDTO taskDTO) throws Exception {
+            @RequestBody TaskCreateDTO taskDTO) throws Exception {
         return taskService.createTask(taskDTO);
     }
 
@@ -129,6 +131,7 @@ public class TaskController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public TaskShowDTO updateTask(
+            @Valid
             @Parameter(description = "id of item to be update")
             @PathVariable long id, @RequestBody TaskUpdateDTO task) {
         return taskService.updateTask(id, task);
@@ -155,7 +158,7 @@ public class TaskController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(ID)
     @PreAuthorize(ONLY_AUTHOR_BY_ID)
-    public void deleteTask(@PathVariable Long id) {
+    public void deleteTask(@Valid @PathVariable Long id) {
         taskService.deleteTask(id);
     }
 }

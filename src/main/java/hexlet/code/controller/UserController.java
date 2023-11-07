@@ -61,6 +61,7 @@ public class UserController {
     @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     public UserShowDTO getUser(
+            @Valid
             @Parameter(description = "id of item to be find")
             @PathVariable long id) {
         return userService.getUser(id);
@@ -98,8 +99,9 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public UserShowDTO createUser(
+            @Valid
             @Parameter(description = "DTO object to create")
-            @Valid @RequestBody UserCreateDTO u) throws Exception {
+            @RequestBody UserCreateDTO u) throws Exception {
         return userService.createUser(u);
     }
 
@@ -125,6 +127,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(ONLY_OWNER_BY_ID)
     public void deleteUser(
+            @Valid
             @Parameter(description = "id of item to be delete")
             @PathVariable long id) {
         userService.deleteUser(id);
@@ -156,6 +159,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize(ONLY_OWNER_BY_ID)
     public UserShowDTO updateUser(
+            @Valid
             @Parameter(description = "id of item to be update")
             @PathVariable long id, @RequestBody UserUpdateDTO user) {
         return userService.updateUser(id, user);

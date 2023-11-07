@@ -1,6 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
+import hexlet.code.dto.TaskStatus.TaskStatusCreateDTO;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.utils.InstansioModelGenerator;
@@ -18,6 +19,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import static hexlet.code.config.TestConfig.TEST_PROFILE;
+import static hexlet.code.utils.TestUtils.TASK_STATUSES_BASEURL;
+import static hexlet.code.utils.TestUtils.asJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,17 +44,17 @@ class TaskStatusControllerTest {
     private TaskStatus taskStatus;
     @Autowired
     private TestUtils utils;
-    private static final String BASEURL = "/api/statuses";
+
     @BeforeEach
     public void setUp() {
         taskStatus = Instancio.of(instansioModelGenerator.getTaskStatusModel())
                 .create();
+        taskStatusRepository.save(taskStatus);
     }
 
     @Test
     void testGetStatusIfStatusPersist() throws Exception {
-        taskStatusRepository.save(taskStatus);
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + taskStatus.getId()))
+        final var response = utils.performAuthorizedRequest(get(TASK_STATUSES_BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -63,7 +66,7 @@ class TaskStatusControllerTest {
     @Test
     void testGetStatusIfStatusNotPersist() throws Exception {
         var nonExistentID  = taskStatusRepository.findAll().size() + 999;
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + nonExistentID))
+        final var response = utils.performAuthorizedRequest(get(TASK_STATUSES_BASEURL + "/" + nonExistentID))
                 .andReturn()
                 .getResponse();
 
@@ -72,7 +75,7 @@ class TaskStatusControllerTest {
 
     @Test
     void testGetStatusIfStatusNotPersistAndRequestIsNotCorrect() throws Exception {
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + "a"))
+        final var response = utils.performAuthorizedRequest(get(TASK_STATUSES_BASEURL + "/" + "a"))
                 .andReturn()
                 .getResponse();
 
@@ -82,11 +85,10 @@ class TaskStatusControllerTest {
 
     @Test
     void testGetStatuses() throws Exception {
-        taskStatusRepository.save(taskStatus);
         var taskStatus2 = Instancio.of(instansioModelGenerator.getTaskStatusModel())
                 .create();
         taskStatusRepository.save(taskStatus2);
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(TASK_STATUSES_BASEURL))
                 .andReturn()
                 .getResponse();
 
@@ -100,37 +102,30 @@ class TaskStatusControllerTest {
     @Test
     void testCreateStatus() throws Exception {
         final var responsePost = utils.performAuthorizedRequest(
-                        post(BASEURL)
+                        post(TASK_STATUSES_BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                        {
-                                            "name": "test status"
-                                        }
-                                        """
-                                )
+                                .content(asJson(utils.NEW_TASK_STATUS))
                 )
                 .andReturn()
                 .getResponse();
         assertThat(responsePost.getStatus()).isEqualTo(201);
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
+
+        final var response = utils.performAuthorizedRequest(get(TASK_STATUSES_BASEURL))
                 .andReturn()
                 .getResponse();
+
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains("test status");
+        assertThat(response.getContentAsString()).contains(utils.NEW_TASK_STATUS.getName());
     }
 
     @Test
     void testCreateStatusWithNull() throws Exception {
+        TaskStatusCreateDTO nullStatus = new TaskStatusCreateDTO();
         final var responsePost = utils.performAuthorizedRequest(
-                        post(BASEURL)
+                        post(TASK_STATUSES_BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                        {
-                                            "name": null
-                                        }
-                                        """
-                                )
+                                .content(asJson(nullStatus))
                 )
                 .andReturn()
                 .getResponse();
@@ -139,41 +134,36 @@ class TaskStatusControllerTest {
 
     @Test
     void testUpdatesStatus() throws Exception {
-        taskStatusRepository.save(taskStatus);
+
         final var responsePost = utils.performAuthorizedRequest(
-                        put(BASEURL + "/" + taskStatus.getId())
+                        put(TASK_STATUSES_BASEURL + "/" + taskStatus.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("""
-                                        {
-                                            "name": "updated status"
-                                        }
-                                        """
-                                )
+                                .content(asJson(utils.UPDATED_TASK_STATUS))
                 )
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + taskStatus.getId()))
+        final var response = utils.performAuthorizedRequest(get(TASK_STATUSES_BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains("updated status");
+        assertThat(response.getContentAsString()).contains(utils.UPDATED_TASK_STATUS.getName());
     }
 
     @Test
     void testDeletePerson() throws Exception {
-        taskStatusRepository.save(taskStatus);
-        final var responsePost = utils.performAuthorizedRequest(delete(BASEURL + "/" + taskStatus.getId()))
+        final var responsePost = utils.performAuthorizedRequest(
+                delete(TASK_STATUSES_BASEURL + "/" + taskStatus.getId()))
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(TASK_STATUSES_BASEURL))
                 .andReturn()
                 .getResponse();
 

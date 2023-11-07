@@ -4,35 +4,23 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-//import org.openapitools.jackson.nullable.JsonNullable;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserUpdateDTO {
-
-//    @Email
-//    private JsonNullable<String> email;
-//
-//    @NotEmpty
-//    @Size(min = 1)
-//    private JsonNullable<String> firstName;
-//
-//    @NotBlank
-//    @Size(min = 1)
-//    private JsonNullable<String> lastName;
-//
-//    @NotBlank
-//    @Size(min = 3)
-//    private JsonNullable<String> password;
     @Email
     private String email;
 
     @NotEmpty
-    @Size(min = 1)
+    @Size(min = 3)
     private String firstName;
 
     @NotBlank
-    @Size(min = 1)
+    @Size(min = 3)
     private String lastName;
 
     @NotBlank

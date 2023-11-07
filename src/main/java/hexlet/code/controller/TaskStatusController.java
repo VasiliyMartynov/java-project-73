@@ -56,6 +56,7 @@ public class TaskStatusController {
     @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     public TaskStatusShowDTO getTaskStatus(
+            @Valid
             @Parameter(description = "id of item to be find")
             @PathVariable long id) {
         return taskStatusService.getTaskStatus(id);
@@ -95,8 +96,9 @@ public class TaskStatusController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public TaskStatusShowDTO createTaskStatus(
+            @Valid
             @Parameter(description = "DTO object to create")
-            @Valid @RequestBody TaskStatusCreateDTO task) throws Exception {
+            @RequestBody TaskStatusCreateDTO task) throws Exception {
         return taskStatusService.createTaskStatus(task);
     }
 
@@ -125,6 +127,7 @@ public class TaskStatusController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public TaskStatusShowDTO updateTaskStatus(
+            @Valid
             @Parameter(description = "id and DTO of item to be update")
             @PathVariable long id, @RequestBody TaskStatusUpdateDTO task) {
         return taskStatusService.updateTaskStatus(id, task);
@@ -151,6 +154,7 @@ public class TaskStatusController {
     @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     public void deleteTaskStatus(
+            @Valid
             @Parameter(description = "id of item to be delete")
             @PathVariable long id) {
         taskStatusService.deleteTaskStatus(id);

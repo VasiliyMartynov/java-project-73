@@ -30,8 +30,6 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 public class Label {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "label_generator")
-//    @SequenceGenerator(name = "label_generator", sequenceName = "label_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence_gen")
     @SequenceGenerator(name = "sequence_gen", sequenceName = "label_seq", allocationSize = 1)
     private Long id;

@@ -57,6 +57,7 @@ public class LabelController {
     @GetMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     public LabelShowDTO getLabel(
+            @Valid
             @Parameter(description = "id of item to be find")
             @PathVariable long id) {
         return labelService.getLabel(id);
@@ -96,8 +97,9 @@ public class LabelController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public LabelShowDTO createLabel(
+            @Valid
             @Parameter(description = "DTO object to create")
-            @Valid @RequestBody LabelCreateDTO label) throws Exception {
+            @RequestBody LabelCreateDTO label) throws Exception {
         return labelService.createLabel(label);
     }
 
@@ -126,6 +128,7 @@ public class LabelController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public LabelShowDTO updateLabel(
+            @Valid
             @Parameter(description = "id and DTOof item to be update")
             @PathVariable long id, @RequestBody LabelUpdateDTO label) throws Exception {
         return labelService.updateLabel(id, label);
@@ -152,6 +155,7 @@ public class LabelController {
     @DeleteMapping(ID)
     @ResponseStatus(HttpStatus.OK)
     public void deleteLabel(
+            @Valid
             @Parameter(description = "id of item to be delete")
             @PathVariable long id) {
         labelService.deleteLabel(id);

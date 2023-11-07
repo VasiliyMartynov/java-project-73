@@ -23,13 +23,21 @@ public class UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * getUser return exist UserShowDTO object of User model.
+     * @param id
+     * @return UserShowDTO
+     */
     public UserShowDTO getUser(long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(id + " not found")
         );
         return userMapper.INSTANCE.showUser(user);
     }
-
+    /**
+     * getUsers return list of UserShowDTO objects of User model.
+     * @return UserShowDTO
+     */
     public List<UserShowDTO> getUsers() {
         try {
             List<User> users = userRepository.findAll();
@@ -41,7 +49,11 @@ public class UserService {
             throw new NullPointerException("There are no any user");
         }
     }
-
+    /**
+     * createUser create new User object and save it to database. Return UserShowDTO object of User model.
+     * @param newUser
+     * @return UserShowDTO
+     */
     public UserShowDTO createUser(UserCreateDTO newUser) throws Exception {
         if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
             throw new Exception(
@@ -58,7 +70,10 @@ public class UserService {
         }
 
     }
-
+    /**
+     * deleteUser delete exist User object from database. Return void.
+     * @param id
+     */
     public void deleteUser(long id) {
         try {
             Optional<User> user = userRepository.findById(id);
@@ -67,11 +82,17 @@ public class UserService {
             throw new NoSuchElementException(id + " not found");
         }
     }
-
+    /**
+     * updateUser update  exist User object in database. Return void UserShowDTO object of User model.
+     * @param id
+     * @param dataThatShouldBeUpdated
+     * @return UserShowDTO
+     */
     public UserShowDTO updateUser(long id, UserUpdateDTO dataThatShouldBeUpdated) {
         try {
             var user = userRepository.findById(id).orElseThrow();
             userMapper.INSTANCE.updateUser(dataThatShouldBeUpdated, user);
+            user.setPassword(passwordEncoder.encode(dataThatShouldBeUpdated.getPassword()));
             userRepository.save(user);
             return userMapper.INSTANCE.showUser(user);
         } catch (NoSuchElementException ex) {
@@ -79,10 +100,17 @@ public class UserService {
         }
     }
 
+    /**
+     * getCurrentUserName return authenticated username from security context.
+     * @return String
+     */
     public String getCurrentUserName() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
-
+    /**
+     * getCurrentUser return authenticated user object from user repository.
+     * @return User
+     */
     public User getCurrentUser() {
         return userRepository.findByEmail(getCurrentUserName()).get();
     }

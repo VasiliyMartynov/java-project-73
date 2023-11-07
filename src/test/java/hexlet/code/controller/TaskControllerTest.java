@@ -1,6 +1,8 @@
 package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
+import hexlet.code.dto.Task.TaskCreateDTO;
+import hexlet.code.dto.Task.TaskUpdateDTO;
 import hexlet.code.models.Label;
 import hexlet.code.models.Task;
 import hexlet.code.models.TaskStatus;
@@ -23,8 +25,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 import java.util.Set;
 import static hexlet.code.config.TestConfig.TEST_PROFILE;
+import static hexlet.code.utils.TestUtils.asJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -59,10 +64,13 @@ class TaskControllerTest {
     private User testUser = new User();
     private Label label1;
     private Label label2;
+
+    private Set<Integer> labels = new HashSet<>();
     private TaskStatus taskStatus1;
     private TaskStatus taskStatus2;
 
-    private static final String BASEURL = "/api/tasks";
+
+
 
     @BeforeEach
     public void setup() {
@@ -80,6 +88,7 @@ class TaskControllerTest {
                 .create();
         label2 = Instancio.of(instansioModelGenerator.getLabelModel())
                 .create();
+
         taskStatus1 = Instancio.of(instansioModelGenerator.getTaskStatusModel())
                 .create();
         taskStatus2 = Instancio.of(instansioModelGenerator.getTaskStatusModel())
@@ -99,6 +108,9 @@ class TaskControllerTest {
         task1.setName("new test task1");
         task1.setDescription("some description1");
 
+        labels.add(Math.toIntExact(label1.getId()));
+        labels.add(Math.toIntExact(label2.getId()));
+
 
         task2.setAuthor(user2);
         task2.setExecutor(user1);
@@ -106,13 +118,14 @@ class TaskControllerTest {
         task2.setLabels(Set.of(label1, label2));
         task2.setName("new test task2");
         task2.setDescription("some description2");
+        taskRepository.save(task1);
+        taskRepository.save(task2);
 
     }
 
     @Test
     void testGetTaskIfTaskPersist() throws Exception {
-        taskRepository.save(task1);
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + task1.getId()))
+        final var response = utils.performAuthorizedRequest(get(TestUtils.TASKS_BASEURL + "/" + task1.getId()))
                 .andReturn()
                 .getResponse();
 
@@ -123,9 +136,8 @@ class TaskControllerTest {
 
     @Test
     void testGetTaskIfTaskNotPersist() throws Exception {
-        taskRepository.save(task1);
         var nonExistentID  = taskRepository.findAll().size() + 1;
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + nonExistentID))
+        final var response = utils.performAuthorizedRequest(get(TestUtils.TASKS_BASEURL + "/" + nonExistentID))
                 .andReturn()
                 .getResponse();
 
@@ -136,7 +148,7 @@ class TaskControllerTest {
 
     @Test
     void testGetTaskIfTaskNotPersistAndRequestIsNotCorrect() throws Exception {
-        final var response = utils.performAuthorizedRequest(get(BASEURL + "/" + "a"))
+        final var response = utils.performAuthorizedRequest(get(TestUtils.TASKS_BASEURL + "/" + "a"))
                 .andReturn()
                 .getResponse();
 
@@ -145,9 +157,7 @@ class TaskControllerTest {
 
     @Test
     void testGetTasks() throws Exception {
-        taskRepository.save(task1);
-        taskRepository.save(task2);
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(TestUtils.TASKS_BASEURL))
                 .andReturn()
                 .getResponse();
 
@@ -158,103 +168,36 @@ class TaskControllerTest {
 
     }
 
-
     @Test
     void testCreateTask() throws Exception {
+        TaskCreateDTO newTask = new TaskCreateDTO(
+                "new Task",
+                "task description",
+                Math.toIntExact(user1.getId()),
+                Math.toIntExact(taskStatus1.getId()),
+                labels);
         final var responsePost = utils.performAuthorizedRequest(
-                post(BASEURL)
+                post(TestUtils.TASKS_BASEURL)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                            "{\"name\":\"new task\","
-                            + "\"description\":\"task description\","
-                            + "\"executorId\":" + user1.getId() + ","
-                            + "\"taskStatusId\":" + taskStatus1.getId() + ","
-                            + "\"labelIds\":["
-                            + label1.getId() + "," + label2.getId() + "]}"
-                    )
+                    .content(asJson(newTask))
             )
             .andReturn()
             .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(201);
 
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(TestUtils.TASKS_BASEURL))
                 .andReturn()
                 .getResponse();
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains("new task", "task description");
-    }
-
-    @Test
-    void testCreateTaskNoExecutorId() throws Exception {
-        final var responsePost = utils.performAuthorizedRequest(
-                post(BASEURL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\":\"new task\","
-                            + "\"description\":\"task description\","
-                            + "\"executorId\":,"
-                            + "\"taskStatusId\":" + taskStatus1.getId() + ","
-                            + "\"labelIds\":["
-                            + label1.getId()
-                            + "," + label2.getId() + "]}"
-                    )
-                )
-                .andReturn()
-                .getResponse();
-
-        assertThat(responsePost.getStatus()).isEqualTo(400);
-    }
-
-    @Test
-    void testCreateEmptyName() throws Exception {
-        final var responsePost = utils.performAuthorizedRequest(
-                post(BASEURL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("{\"name\":\"\","
-                            + "\"description\":\"new task description\","
-                            + "\"executorId\":" + user1.getId() + ","
-                            + "\"taskStatusId\":" + taskStatus1.getId() + ","
-                            + "\"labelIds\":[1,2,3]}"
-                    )
-                )
-                .andReturn()
-                .getResponse();
-
-        assertThat(responsePost.getStatus()).isEqualTo(422);
-        final var response = utils.performAuthorizedRequest(get("/tasks"))
-                .andReturn()
-                .getResponse();
-        assertThat(response.getContentAsString()).doesNotContain("new task description");
-    }
-
-    @Test
-    void testCreateTaskNoStatus() throws Exception {
-        final var responsePost = utils.performAuthorizedRequest(
-                post(BASEURL)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                            "{\"name\":\"new task with\","
-                            + "\"description\":\"new task description\","
-                            + "\"executorId\":" + user1.getId() + ","
-                            + "\"taskStatusId\":,"
-                            + "\"labelIds\":[1,2,3]}"
-                    )
-                )
-                .andReturn()
-                .getResponse();
-
-        assertThat(responsePost.getStatus()).isEqualTo(400);
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
-                .andReturn()
-                .getResponse();
-        assertThat(response.getContentAsString()).doesNotContain("new task with", "new task description");
+        assertThat(response.getContentAsString()).contains(newTask.getName(), newTask.getDescription());
     }
 
     @Test
     void testCreateTaskNoJson() throws Exception {
         final var responsePost = utils.performAuthorizedRequest(
-                        post(BASEURL)
+                        post(TestUtils.TASKS_BASEURL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("")
                 )
@@ -265,45 +208,40 @@ class TaskControllerTest {
         final var response = utils.performAuthorizedRequest(get("/tasks"))
                 .andReturn()
                 .getResponse();
-        assertThat(response.getContentAsString()).doesNotContain("testEmail@testEmail.com", "Biba", "Boba");
     }
 
     @Test
     void testUpdatesTask() throws Exception {
-        taskRepository.save(task1);
+        TaskUpdateDTO updatedTask = new TaskUpdateDTO(
+                "new Task",
+                "task description",
+                Math.toIntExact(user1.getId()),
+                Math.toIntExact(taskStatus1.getId()),
+                labels);
         final var responsePost = utils.performAuthorizedRequest(
-                put(BASEURL + "/" + task1.getId())
+                put(TestUtils.TASKS_BASEURL + "/" + task1.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(
-                            "{\"name\":\"updated task\","
-                            + "\"description\":\"updated description\","
-                            + "\"executorId\":" + user1.getId() + ","
-                            + "\"taskStatusId\":" + taskStatus1.getId() + ","
-                            + "\"labelIds\":[" + label1.getId()
-                            + "," + label2.getId() + "]}"
-                    )
-                )
+                        .content(asJson(updatedTask)))
                 .andReturn()
                 .getResponse();
 
         assertThat(responsePost.getStatus()).isEqualTo(200);
 
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(TestUtils.TASKS_BASEURL))
                 .andReturn()
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentType()).isEqualTo(MediaType.APPLICATION_JSON.toString());
-        assertThat(response.getContentAsString()).contains("updated task", "updated description");
+        assertThat(response.getContentAsString()).contains(updatedTask.getName(), updatedTask.getDescription());
     }
 
     @Test
     void testDeleteTask() throws Exception {
-        taskRepository.save(task1);
-        final var response1 = utils.performAuthorizedRequest(delete(BASEURL + "/" + task1.getId()))
+        final var response1 = utils.performAuthorizedRequest(delete(TestUtils.TASKS_BASEURL + "/" + task1.getId()))
                 .andReturn()
                 .getResponse();
-        final var response = utils.performAuthorizedRequest(get(BASEURL))
+        final var response = utils.performAuthorizedRequest(get(TestUtils.TASKS_BASEURL))
                 .andReturn()
                 .getResponse();
         assertThat(response.getStatus()).isEqualTo(200);

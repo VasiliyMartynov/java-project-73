@@ -1,26 +1,26 @@
 package hexlet.code.dto.Task;
 
-import hexlet.code.models.TaskStatus;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-//import java.util.List;
+import lombok.NoArgsConstructor;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskUpdateDTO {
 
-
-    @NotBlank
+    @NotEmpty
+    @Size(min = 1)
     private String name;
     private String description;
-    @NotNull
-    private TaskStatus taskStatus;
-    @NotNull
-    private Set<Integer> labelIds;
     @NotNull
     private int executorId;
     @NotNull
     private int taskStatusId;
+    private Set<Integer> labelIds = new HashSet<>();
 }
