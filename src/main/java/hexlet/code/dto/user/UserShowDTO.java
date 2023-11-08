@@ -1,4 +1,4 @@
-package hexlet.code.dto.User;
+package hexlet.code.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;

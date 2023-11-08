@@ -1,7 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
-import hexlet.code.dto.User.UserCreateDTO;
+import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.utils.InstansioModelGenerator;

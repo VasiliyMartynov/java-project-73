@@ -1,10 +1,10 @@
 package hexlet.code.service;
 
-import hexlet.code.dto.User.UserCreateDTO;
-import hexlet.code.dto.User.UserShowDTO;
-import hexlet.code.dto.User.UserUpdateDTO;
+import hexlet.code.dto.user.UserCreateDTO;
+import hexlet.code.dto.user.UserShowDTO;
+import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
-import hexlet.code.dto.Mappers.UserMapper;
+import hexlet.code.mappers.UserMapper;
 import hexlet.code.models.User;
 import hexlet.code.repository.UserRepository;
 import lombok.AllArgsConstructor;

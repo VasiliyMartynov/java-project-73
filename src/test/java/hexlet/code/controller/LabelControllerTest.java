@@ -1,7 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
-import hexlet.code.dto.Label.LabelCreateDTO;
+import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.models.Label;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.utils.InstansioModelGenerator;

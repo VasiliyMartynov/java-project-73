@@ -1,9 +1,9 @@
 package hexlet.code.service;
 
-import hexlet.code.dto.TaskStatus.TaskStatusCreateDTO;
-import hexlet.code.dto.Mappers.TaskStatusMapper;
-import hexlet.code.dto.TaskStatus.TaskStatusShowDTO;
-import hexlet.code.dto.TaskStatus.TaskStatusUpdateDTO;
+import hexlet.code.dto.taskStatus.TaskStatusCreateDTO;
+import hexlet.code.mappers.TaskStatusMapper;
+import hexlet.code.dto.taskStatus.TaskStatusShowDTO;
+import hexlet.code.dto.taskStatus.TaskStatusUpdateDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;

@@ -1,7 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
-import hexlet.code.dto.TaskStatus.TaskStatusCreateDTO;
+import hexlet.code.dto.taskStatus.TaskStatusCreateDTO;
 import hexlet.code.models.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.utils.InstansioModelGenerator;

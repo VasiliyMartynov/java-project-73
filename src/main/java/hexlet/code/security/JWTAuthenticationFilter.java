@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import hexlet.code.component.JWTHelper;
-import hexlet.code.dto.User.UserCreateDTO;
+import hexlet.code.dto.user.UserCreateDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

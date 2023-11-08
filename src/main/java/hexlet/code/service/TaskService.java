@@ -1,11 +1,11 @@
 package hexlet.code.service;
 
 import com.querydsl.core.types.Predicate;
-import hexlet.code.dto.Task.TaskCreateDTO;
-import hexlet.code.dto.Task.TaskShowDTO;
-import hexlet.code.dto.Task.TaskUpdateDTO;
+import hexlet.code.dto.task.TaskCreateDTO;
+import hexlet.code.dto.task.TaskShowDTO;
+import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.exceptions.ResourceNotFoundException;
-import hexlet.code.dto.Mappers.TaskMapper;
+import hexlet.code.mappers.TaskMapper;
 import hexlet.code.models.Label;
 import hexlet.code.models.Task;
 import hexlet.code.repository.LabelRepository;

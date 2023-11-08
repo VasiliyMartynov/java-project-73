@@ -1,7 +1,7 @@
-package hexlet.code.dto.Task;
+package hexlet.code.dto.task;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import hexlet.code.dto.User.UserShowDTO;
+import hexlet.code.dto.user.UserShowDTO;
 import hexlet.code.models.Label;
 import hexlet.code.models.TaskStatus;
 import lombok.Data;

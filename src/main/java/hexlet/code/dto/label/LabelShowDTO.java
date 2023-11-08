@@ -1,4 +1,4 @@
-package hexlet.code.dto.Label;
+package hexlet.code.dto.label;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

@@ -1,8 +1,8 @@
 package hexlet.code.controller;
 
 import hexlet.code.config.TestConfig;
-import hexlet.code.dto.Task.TaskCreateDTO;
-import hexlet.code.dto.Task.TaskUpdateDTO;
+import hexlet.code.dto.task.TaskCreateDTO;
+import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.models.Label;
 import hexlet.code.models.Task;
 import hexlet.code.models.TaskStatus;
